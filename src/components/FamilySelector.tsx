@@ -1,12 +1,13 @@
 
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Family } from '@/types';
-import { Users, Plus, Edit, Trash2 } from 'lucide-react';
+import { Family, FamilyRelationship } from '@/types';
+import { Users, Plus, Edit, Trash2, Link2 } from 'lucide-react';
 import CreateFamilyModal from './CreateFamilyModal';
+import FamilyRelationshipManager from './FamilyRelationshipManager';
 
 interface FamilySelectorProps {
   families: Family[];
@@ -28,7 +29,37 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
   canEdit
 }) => {
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+  const [isManageRelationshipsOpen, setIsManageRelationshipsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  
+  // Update family relationships
+  const handleAddRelationship = (familyId: string, relationship: Omit<FamilyRelationship, 'createdAt'>) => {
+    if (!selectedFamily) return;
+    
+    const updatedFamily = {
+      ...selectedFamily,
+      relationships: [
+        ...selectedFamily.relationships,
+        {
+          ...relationship,
+          createdAt: new Date()
+        }
+      ]
+    };
+    
+    onUpdateFamily(updatedFamily);
+  };
+  
+  const handleRemoveRelationship = (familyId: string) => {
+    if (!selectedFamily) return;
+    
+    const updatedFamily = {
+      ...selectedFamily,
+      relationships: selectedFamily.relationships.filter(r => r.familyId !== familyId)
+    };
+    
+    onUpdateFamily(updatedFamily);
+  };
 
   const filteredFamilies = families.filter(family =>
     family.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -50,15 +81,27 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
           onChange={(e) => setSearchTerm(e.target.value)}
           className="max-w-md"
         />
-        {canEdit && (
-          <Button
-            onClick={() => setIsCreateModalOpen(true)}
-            className="family-gradient hover:opacity-90"
-          >
-            <Plus className="w-4 h-4 mr-2" />
-            Create Family
-          </Button>
-        )}
+        <div className="flex gap-2">
+          {selectedFamily && (
+            <Button
+              variant="outline"
+              onClick={() => setIsManageRelationshipsOpen(true)}
+              disabled={!selectedFamily}
+            >
+              <Link2 className="w-4 h-4 mr-2" />
+              Manage Relationships
+            </Button>
+          )}
+          {canEdit && (
+            <Button
+              onClick={() => setIsCreateModalOpen(true)}
+              className="family-gradient hover:opacity-90"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Create Family
+            </Button>
+          )}
+        </div>
       </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -74,15 +117,22 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
-                <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 family-gradient rounded-lg flex items-center justify-center">
+                <div className="flex items-start space-x-3 w-full">
+                  <div className="w-10 h-10 family-gradient rounded-lg flex items-center justify-center flex-shrink-0">
                     <Users className="w-5 h-5 text-white" />
                   </div>
-                  <div>
-                    <CardTitle className="text-lg">{family.name}</CardTitle>
-                    <Badge variant="secondary" className="text-xs mt-1">
-                      {family.members.length} members
-                    </Badge>
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="text-lg truncate">{family.name}</CardTitle>
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      <Badge variant="secondary" className="text-xs">
+                        {family.members.length} members
+                      </Badge>
+                      {family.relationships && family.relationships.length > 0 && (
+                        <Badge variant="outline" className="text-xs">
+                          {family.relationships.length} linked
+                        </Badge>
+                      )}
+                    </div>
                   </div>
                 </div>
                 
@@ -148,8 +198,22 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
       <CreateFamilyModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
-        onCreate={onCreateFamily}
+        onCreate={(newFamily) => {
+          onCreateFamily(newFamily);
+          setIsCreateModalOpen(false);
+        }}
       />
+      
+      {selectedFamily && (
+        <FamilyRelationshipManager
+          isOpen={isManageRelationshipsOpen}
+          onClose={() => setIsManageRelationshipsOpen(false)}
+          family={selectedFamily}
+          allFamilies={families.filter(f => f.id !== selectedFamily.id)}
+          onAddRelationship={(rel) => handleAddRelationship(selectedFamily.id, rel)}
+          onRemoveRelationship={handleRemoveRelationship}
+        />
+      )}
     </div>
   );
 };

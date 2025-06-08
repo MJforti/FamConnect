@@ -7,6 +7,13 @@ export interface User {
   createdAt: Date;
 }
 
+export interface FamilyRelationship {
+  familyId: string;
+  relationshipType: 'parent' | 'child' | 'related' | 'merged';
+  notes?: string;
+  createdAt: Date;
+}
+
 export interface Family {
   id: string;
   name: string;
@@ -15,6 +22,8 @@ export interface Family {
   createdAt: Date;
   updatedAt: Date;
   members: FamilyMember[];
+  relationships: FamilyRelationship[];
+  isActive: boolean;
 }
 
 export interface FamilyMember {
