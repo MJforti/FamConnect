@@ -37,13 +37,13 @@
 
     --radius: 0.75rem;
 
-    /* Family-specific colors - Yellow theme */
-    --family-warm: 255 247 201; /* Light yellow */
-    --family-warm-foreground: 30 30 45;
-    --family-love: 255 240 160; /* Medium yellow */
-    --family-love-foreground: 30 30 45;
-    --family-connection: 255 233 121; /* Brighter yellow */
-    --family-connection-foreground: 30 30 45;
+    /* Family-specific colors - Neon Blue theme */
+    --family-warm: 224 242 254; /* Light sky blue */
+    --family-warm-foreground: 7 89 133;
+    --family-love: 147 197 253; /* Medium blue */
+    --family-love-foreground: 12 74 110;
+    --family-connection: 96 165 250; /* Brighter neon blue */
+    --family-connection-foreground: 255 255 255;
   }
 
   .dark {
