@@ -16,33 +16,33 @@
     --popover: 255 255 255;
     --popover-foreground: 30 30 45;
 
-    --primary: 59 130 246;
+    --primary: 59 130 246; /* Blue instead of any yellow */
     --primary-foreground: 255 255 255;
 
-    --secondary: 148 163 184;
+    --secondary: 148 163 184; /* Cool gray */
     --secondary-foreground: 30 30 45;
 
-    --muted: 248 250 252;
+    --muted: 240 240 235; /* Beige-tinted muted */
     --muted-foreground: 100 116 139;
 
-    --accent: 34 197 94;
+    --accent: 34 197 94; /* Green instead of yellow */
     --accent-foreground: 255 255 255;
 
     --destructive: 239 68 68;
     --destructive-foreground: 255 255 255;
 
-    --border: 226 232 240;
-    --input: 226 232 240;
+    --border: 210 210 200; /* Beige-tinted border */
+    --input: 235 235 225; /* Beige-tinted input */
     --ring: 59 130 246;
 
     --radius: 0.75rem;
 
-    /* Family-specific colors - Neon Blue theme */
-    --family-warm: 224 242 254; /* Light sky blue */
-    --family-warm-foreground: 7 89 133;
-    --family-love: 147 197 253; /* Medium blue */
-    --family-love-foreground: 12 74 110;
-    --family-connection: 96 165 250; /* Brighter neon blue */
+    /* Family-specific colors - Blue/Beige theme (no yellow) */
+    --family-warm: 240 248 255; /* Very light blue */
+    --family-warm-foreground: 30 58 138;
+    --family-love: 191 219 254; /* Light blue */
+    --family-love-foreground: 30 64 175;
+    --family-connection: 96 165 250; /* Medium blue */
     --family-connection-foreground: 255 255 255;
   }
 
