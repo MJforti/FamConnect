@@ -9,8 +9,8 @@ export interface User {
 
 export interface FamilyRelationship {
   familyId: string;
-  relationshipType: 'parent' | 'child' | 'related' | 'merged';
-  notes?: string;
+  relationshipType: 'parent' | 'child' | 'sibling' | 'extended' | 'other';
+  description?: string;
   createdAt: Date;
 }
 
@@ -22,8 +22,9 @@ export interface Family {
   createdAt: Date;
   updatedAt: Date;
   members: FamilyMember[];
-  relationships: FamilyRelationship[];
-  isActive: boolean;
+  relatedFamilies: FamilyRelationship[];
+  isPublic: boolean;
+  coverImage?: string;
 }
 
 export interface FamilyMember {
@@ -43,12 +44,23 @@ export interface FamilyMember {
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
+  isPrimaryContact?: boolean;
+  isDeceased?: boolean;
+  customFields?: Record<string, any>; // For any additional custom fields
 }
 
 export interface Relationship {
   memberId: string;
   relationType: 'parent' | 'child' | 'sibling' | 'spouse' | 'grandparent' | 'grandchild' | 'uncle' | 'aunt' | 'cousin' | 'other';
   description?: string;
+  familyId?: string; // Optional field to support cross-family relationships
+}
+
+export interface FamilyRelationship {
+  familyId: string;
+  relationshipType: 'parent' | 'child' | 'sibling' | 'extended' | 'other';
+  description?: string;
+  createdAt: Date;
 }
 
 export interface MediaItem {

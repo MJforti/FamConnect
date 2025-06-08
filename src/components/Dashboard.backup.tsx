@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -7,20 +7,13 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
 import { Family, FamilyMember, MediaItem, FamilyRelationship } from '@/types';
-import { Users, Search, Plus, Globe, Lock, Image as ImageIcon, Video, Edit, Trash2, Link as LinkIcon } from 'lucide-react';
+import { Users, Search, User, Calendar, Bell, Image as ImageIcon, Video, Edit, Trash2, Link as LinkIcon } from 'lucide-react';
 import FamilySelector from './FamilySelector';
 import FamilyMemberCard from './FamilyMemberCard';
 import AddMemberModal from './AddMemberModal';
 import MediaGallery from './MediaGallery';
 import FamilyTree from './FamilyTree';
 import FamilyRelationshipManager from './FamilyRelationshipManager';
-
-type FamilyTreeProps = {
-  members: FamilyMember[];
-  onUpdateMember: (member: FamilyMember) => void;
-  onDeleteMember: (id: string) => void;
-  canEdit: boolean;
-};
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -52,8 +45,6 @@ const Dashboard: React.FC = () => {
   // ... rest of the component code ...
 
   const handleCreateFamily = useCallback((familyData: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members' | 'relatedFamilies' | 'isPublic'>) => {
-    if (!user) return null;
-    
     const newFamily: Family = {
       ...familyData,
       id: `family-${Date.now()}`,
@@ -69,16 +60,7 @@ const Dashboard: React.FC = () => {
     setSelectedFamily(newFamily);
     localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
     return newFamily;
-  }, [families, user]);
-
-  const handleUpdateFamily = useCallback((updatedFamily: Family) => {
-    const updatedFamilies = families.map(f => 
-      f.id === updatedFamily.id ? updatedFamily : f
-    );
-    setFamilies(updatedFamilies);
-    setSelectedFamily(updatedFamily);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-  }, [families]);
+  };
 
   const handleUpdateMember = useCallback((member: FamilyMember) => {
     if (!selectedFamily) return;
@@ -94,9 +76,9 @@ const Dashboard: React.FC = () => {
     };
     
     handleUpdateFamily(updatedFamily);
-  }, [selectedFamily, handleUpdateFamily]);
+  };
 
-  const handleDeleteMember = useCallback((memberId: string) => {
+  const handleDeleteMember = (memberId: string) => {
     if (!selectedFamily) return;
     
     if (window.confirm('Are you sure you want to delete this member?')) {
@@ -105,7 +87,7 @@ const Dashboard: React.FC = () => {
       // Update relationships to remove references to the deleted member
       const updatedMembersWithFixedRelationships = updatedMembers.map(member => ({
         ...member,
-        relationships: member.relationships?.filter(rel => rel.memberId !== memberId) || []
+        relationships: member.relationships.filter(rel => rel.memberId !== memberId)
       }));
       
       const updatedFamily = {
@@ -116,9 +98,9 @@ const Dashboard: React.FC = () => {
       
       handleUpdateFamily(updatedFamily);
     }
-  }, [selectedFamily, handleUpdateFamily]);
+  };
 
-  const handleUploadMedia = useCallback((media: Omit<MediaItem, 'id' | 'createdAt'>) => {
+  const handleUploadMedia = (media: Omit<MediaItem, 'id' | 'createdAt'>) => {
     if (!selectedFamily || !user) return null;
     
     const newMediaItem: MediaItem = {
@@ -126,8 +108,7 @@ const Dashboard: React.FC = () => {
       id: `media-${Date.now()}`,
       familyId: selectedFamily.id,
       uploadedBy: user.id,
-      createdAt: new Date(),
-      updatedAt: new Date()
+      createdAt: new Date()
     };
     
     const updatedMedia = [...mediaItems, newMediaItem];
@@ -135,19 +116,29 @@ const Dashboard: React.FC = () => {
     localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
     
     return newMediaItem;
-  }, [selectedFamily, user, mediaItems]);
+  };
 
-  const handleDeleteMedia = useCallback((mediaId: string) => {
+  const handleDeleteMedia = (mediaId: string) => {
     if (window.confirm('Are you sure you want to delete this media item?')) {
       const updatedMedia = mediaItems.filter(item => item.id !== mediaId);
       setMediaItems(updatedMedia);
       localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
     }
-  }, [mediaItems]);
+  };
 
-  const handleDeleteFamily = useCallback((familyId: string) => {
-    if (!user) return null;
-    
+  const handleUpdateFamily = useCallback((updatedFamily: Family) => {
+    const updatedFamilies = families.map(f => 
+      f.id === updatedFamily.id ? { ...updatedFamily, updatedAt: new Date() } : f
+    );
+    setFamilies(updatedFamilies);
+    if (selectedFamily?.id === updatedFamily.id) {
+      setSelectedFamily(updatedFamily);
+    }
+    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
+    return updatedFamily;
+  }, [families, selectedFamily]);
+
+  const handleDeleteFamily = (familyId: string) => {
     // First, remove this family from all related families
     const updatedFamilies = families.map(family => ({
       ...family,
@@ -164,52 +155,9 @@ const Dashboard: React.FC = () => {
     const updatedMedia = mediaItems.filter(item => item.familyId !== familyId);
     setMediaItems(updatedMedia);
     localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
-  }, [user, families, selectedFamily, mediaItems]);
+  };
 
-  // Filter members based on search term
-  useEffect(() => {
-    if (!selectedFamily) return;
-    
-    const filtered = selectedFamily.members.filter(member => 
-      member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      member.relation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (member.contactInfo.email && member.contactInfo.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (member.notes && member.notes.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
-    setFilteredMembers(filtered);
-  }, [selectedFamily, searchTerm]);
-
-  // Filter media items for the selected family
-  const familyMedia = mediaItems.filter(media => 
-    media.familyId === selectedFamily?.id
-  );
-
-  if (!user) {
-    return <div>Loading...</div>;
-  }
-
-  // Handle adding a new member
-  const handleAddMember = useCallback((memberData: Omit<FamilyMember, 'id' | 'createdAt' | 'updatedAt' | 'relationships' | 'createdBy'>) => {
-    if (!selectedFamily || !user) return null;
-    
-    const newMember: FamilyMember = {
-      ...memberData,
-      id: `member-${Date.now()}`,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      relationships: [],
-      createdBy: user.id,
-    };
-
-    const updatedFamily = {
-      ...selectedFamily,
-      members: [...selectedFamily.members, newMember],
-      updatedAt: new Date()
-    };
-
-    handleUpdateFamily(updatedFamily);
-    setIsAddModalOpen(false);
-  }, [selectedFamily, user, handleUpdateFamily]);
+  // ... rest of the component code ...
 
   return (
     <div className="min-h-screen bg-background">
@@ -224,7 +172,7 @@ const Dashboard: React.FC = () => {
               <div>
                 <h1 className="text-xl font-bold text-foreground">Family Tree</h1>
                 <p className="text-sm text-muted-foreground">
-                  {selectedFamily ? `Managing ${selectedFamily.name}` : `Welcome back, ${user?.fullName || 'User'}`}
+                  {selectedFamily ? `Managing ${selectedFamily.name}` : 'Welcome back, ' + user?.fullName}
                 </p>
               </div>
             </div>
@@ -241,7 +189,7 @@ const Dashboard: React.FC = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8">
         {!selectedFamily ? (
           <FamilySelector
             families={families}
@@ -253,63 +201,52 @@ const Dashboard: React.FC = () => {
             canEdit={user?.familyRole === 'admin'}
           />
         ) : (
-          <div className="space-y-6">
-            <Tabs defaultValue="members" className="w-full">
-              <div className="flex justify-between items-center mb-6">
-                <TabsList className="grid w-full max-w-2xl grid-cols-4">
-                  <TabsTrigger value="families">Families</TabsTrigger>
-                  <TabsTrigger value="members">Members</TabsTrigger>
-                  <TabsTrigger value="family-tree">Family Tree</TabsTrigger>
-                  <TabsTrigger value="media">Media</TabsTrigger>
-                </TabsList>
-                <div className="flex items-center gap-2">
-                  <Button 
-                    variant="outline" 
-                    size="sm"
-                    onClick={() => setIsAddModalOpen(true)}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Member
-                  </Button>
-                </div>
-              </div>
+          <Tabs defaultValue="members" className="space-y-6">
+            <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
+              <TabsList className="grid w-full max-w-2xl grid-cols-4">
+                <TabsTrigger value="families">Families</TabsTrigger>
+                <TabsTrigger value="members">Members</TabsTrigger>
+                <TabsTrigger value="family-tree">Family Tree</TabsTrigger>
+                <TabsTrigger value="media">Media</TabsTrigger>
+              </TabsList>
+            </div>
 
-              <TabsContent value="families" className="space-y-6">
-                <div className="space-y-6">
-                  <FamilySelector
-                    families={families}
-                    selectedFamily={selectedFamily}
-                    onSelectFamily={setSelectedFamily}
-                    onCreateFamily={handleCreateFamily}
-                    onUpdateFamily={handleUpdateFamily}
-                    onDeleteFamily={handleDeleteFamily}
-                    canEdit={user?.familyRole === 'admin'}
-                  />
-                  
-                  {selectedFamily && (
-                    <div className="mt-6">
-                      <h3 className="text-lg font-semibold mb-4">Manage Family</h3>
-                      <div className="grid gap-6 md:grid-cols-2">
-                        <Card>
-                          <CardHeader>
-                            <CardTitle>Family Details</CardTitle>
-                            <CardDescription>View and edit family information</CardDescription>
-                          </CardHeader>
-                          <CardContent>
-                            <div className="space-y-4">
+            <TabsContent value="families">
+              <div className="space-y-6">
+                <FamilySelector
+                  families={families}
+                  selectedFamily={selectedFamily}
+                  onSelectFamily={setSelectedFamily}
+                  onCreateFamily={handleCreateFamily}
+                  onUpdateFamily={handleUpdateFamily}
+                  onDeleteFamily={handleDeleteFamily}
+                  canEdit={user?.familyRole === 'admin'}
+                />
+                
+                {selectedFamily && (
+                  <div className="mt-6">
+                    <h3 className="text-lg font-semibold mb-4">Manage Family</h3>
+                    <div className="grid gap-6 md:grid-cols-2">
+                      <Card>
+                        <CardHeader>
+                          <CardTitle>Family Details</CardTitle>
+                          <CardDescription>View and edit family information</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                          <div className="space-y-4">
+                            <div>
+                              <Label>Family Name</Label>
+                              <p className="font-medium">{selectedFamily.name}</p>
+                            </div>
+                            {selectedFamily.description && (
                               <div>
-                                <Label>Family Name</Label>
-                                <p className="font-medium">{selectedFamily.name}</p>
+                                <Label>Description</Label>
+                                <p className="text-muted-foreground">{selectedFamily.description}</p>
                               </div>
-                              {selectedFamily.description && (
-                                <div>
-                                  <Label>Description</Label>
-                                  <p className="text-muted-foreground">{selectedFamily.description}</p>
-                                </div>
-                              )}
-                              {selectedFamily.coverImage && (
-                                <div className="mt-4">
-                                  <Label>Cover Image</Label>
+                            )}
+                            {selectedFamily.coverImage && (
+                              <div className="mt-4">
+                                <Label>Cover Image</Label>
                                 <div className="mt-2 rounded-md overflow-hidden">
                                   <img 
                                     src={selectedFamily.coverImage} 
@@ -471,7 +408,7 @@ const Dashboard: React.FC = () => {
               )}
             </TabsContent>
 
-            <TabsContent value="family-tree" className="space-y-6">
+            <TabsContent value="family-tree">
               <FamilyTree 
                 members={selectedFamily.members} 
                 onUpdateMember={handleUpdateMember} 
@@ -480,7 +417,7 @@ const Dashboard: React.FC = () => {
               />
             </TabsContent>
 
-            <TabsContent value="media" className="space-y-6">
+            <TabsContent value="media">
               <MediaGallery 
                 familyId={selectedFamily.id}
                 mediaItems={mediaItems.filter(item => item.familyId === selectedFamily.id)}
@@ -489,77 +426,89 @@ const Dashboard: React.FC = () => {
                 canEdit={user?.familyRole === 'admin'}
               />
             </TabsContent>
-
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Manage this family</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-2">
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      // TODO: Implement edit family modal
-                    }}
-                  >
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Family Details
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => setIsAddModalOpen(true)}
-                  >
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Family Member
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      // TODO: Implement link to family functionality
-                    }}
-                  >
-                    <LinkIcon className="w-4 h-4 mr-2" />
-                    Link to Another Family
-                  </Button>
-                  <Button 
-                    variant="destructive" 
-                    className="w-full justify-start"
-                    onClick={() => {
-                      if (window.confirm(`Are you sure you want to delete the "${selectedFamily.name}" family? This action cannot be undone.`)) {
-                        handleDeleteFamily(selectedFamily.id);
-                      }
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" />
-                    Delete Family
-                  </Button>
-                </CardContent>
-              </Card>
-
-              {selectedFamily && (
-                <FamilyRelationshipManager
-                  currentFamily={selectedFamily}
-                  allFamilies={families.filter(f => f.id !== selectedFamily.id)}
-                  onUpdateFamily={handleUpdateFamily}
-                />
-              )}
-            </div>
-          </Tabs>
-
-          <AddMemberModal
-            isOpen={isAddModalOpen}
-            onClose={() => setIsAddModalOpen(false)}
-            onAdd={handleAddMember}
-          />
-        </div>
-      )}
-    </main>
+        )}
+        <span className="text-sm font-medium">
+          {selectedFamily.isPublic ? 'Public' : 'Private'} Family
+        </span>
+      </div>
+      <p className="text-xs text-muted-foreground mt-1">
+        {selectedFamily.isPublic 
+          ? 'Anyone with the link can view this family' 
+          : 'Only invited members can view this family'}
+      </p>
+    </div>
+    <div className="text-sm text-muted-foreground">
+      <p>Created: {new Date(selectedFamily.createdAt).toLocaleDateString()}</p>
+      <p>Last updated: {new Date(selectedFamily.updatedAt).toLocaleDateString()}</p>
+    </div>
   </div>
-);
+</CardContent>
+</Card>
+
+<div className="space-y-6">
+  <Card>
+    <CardHeader>
+      <CardTitle>Quick Actions</CardTitle>
+      <CardDescription>Manage this family</CardDescription>
+    </CardHeader>
+    <CardContent className="space-y-2">
+      <Button 
+        variant="outline" 
+        className="w-full justify-start"
+        onClick={() => {
+          // TODO: Implement edit family modal
+        }}
+      >
+        <Edit className="w-4 h-4 mr-2" />
+        Edit Family Details
+      </Button>
+      <Button 
+        variant="outline" 
+        className="w-full justify-start"
+        onClick={() => {
+          // TODO: Implement add member functionality
+          setIsAddModalOpen(true);
+        }}
+      >
+        <Plus className="w-4 h-4 mr-2" />
+        Add Family Member
+      </Button>
+      <Button 
+        variant="outline" 
+        className="w-full justify-start"
+        onClick={() => {
+          // TODO: Implement link to family functionality
+        }}
+      >
+        <LinkIcon className="w-4 h-4 mr-2" />
+        Link to Another Family
+      </Button>
+      <Button 
+        variant="destructive" 
+        className="w-full justify-start"
+        onClick={() => {
+          if (window.confirm(`Are you sure you want to delete the "${selectedFamily.name}" family? This action cannot be undone.`)) {
+            handleDeleteFamily(selectedFamily.id);
+          }
+        }}
+      >
+        <Trash2 className="w-4 h-4 mr-2" />
+        Delete Family
+      </Button>
+    </CardContent>
+  </Card>
+
+  {selectedFamily && (
+    <FamilyRelationshipManager
+      currentFamily={selectedFamily}
+      allFamilies={families.filter(f => f.id !== selectedFamily.id)}
+      onUpdateFamily={handleUpdateFamily}
+    />
+  )}
+</div>
+</div>
+</div>
+</TabsContent>
 
 <TabsContent value="members" className="space-y-6">
   <div className="flex justify-between items-center">
@@ -626,6 +575,9 @@ const Dashboard: React.FC = () => {
     members={selectedFamily.members} 
     onUpdateMember={handleUpdateMember} 
     onDeleteMember={handleDeleteMember}
+    canEdit={user?.familyRole === 'admin'}
+  />
+</TabsContent>
 
 <TabsContent value="media">
   <MediaGallery 
@@ -634,9 +586,6 @@ const Dashboard: React.FC = () => {
     onUploadMedia={handleUploadMedia}
     onDeleteMedia={handleDeleteMedia}
     canEdit={user?.familyRole === 'admin'}
-  />
-</TabsContent>
-
-// ... (rest of the code remains the same)
+};
 
 export default Dashboard;

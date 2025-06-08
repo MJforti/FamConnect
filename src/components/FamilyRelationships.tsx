@@ -1,20 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Family, FamilyRelationship } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, Trash2, Link as LinkIcon } from 'lucide-react';
 
-interface FamilyRelationshipManagerProps {
+interface FamilyRelationshipsProps {
   currentFamily: Family;
   allFamilies: Family[];
   onUpdateFamily: (updatedFamily: Family) => void;
 }
 
-const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
+const FamilyRelationships: React.FC<FamilyRelationshipsProps> = ({
   currentFamily,
   allFamilies,
   onUpdateFamily,
@@ -28,7 +28,7 @@ const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
   const availableFamilies = allFamilies.filter(
     family => 
       family.id !== currentFamily.id && 
-      !currentFamily.relatedFamilies?.some(rel => rel.familyId === family.id)
+      !currentFamily.relatedFamilies.some(rel => rel.familyId === family.id)
   );
 
   const addRelationship = () => {
@@ -43,7 +43,7 @@ const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
 
     const updatedFamily = {
       ...currentFamily,
-      relatedFamilies: [...(currentFamily.relatedFamilies || []), newRelationship],
+      relatedFamilies: [...currentFamily.relatedFamilies, newRelationship],
       updatedAt: new Date(),
     };
 
@@ -55,7 +55,7 @@ const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
   const removeRelationship = (familyId: string) => {
     const updatedFamily = {
       ...currentFamily,
-      relatedFamilies: (currentFamily.relatedFamilies || []).filter(rel => rel.familyId !== familyId),
+      relatedFamilies: currentFamily.relatedFamilies.filter(rel => rel.familyId !== familyId),
       updatedAt: new Date(),
     };
     onUpdateFamily(updatedFamily);
@@ -161,7 +161,7 @@ const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        {!currentFamily.relatedFamilies?.length ? (
+        {currentFamily.relatedFamilies.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             <p>No family relationships added yet.</p>
             <p className="text-sm mt-2">Click "Add Relationship" to link this family to another family.</p>
@@ -197,4 +197,4 @@ const FamilyRelationshipManager: React.FC<FamilyRelationshipManagerProps> = ({
   );
 };
 
-export default FamilyRelationshipManager;
+export default FamilyRelationships;
