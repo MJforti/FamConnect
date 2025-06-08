@@ -37,12 +37,12 @@
 
     --radius: 0.75rem;
 
-    /* Family-specific colors - Clean neutral palette */
-    --family-warm: 245 245 220; /* Beige color (#F5F5DC) */
+    /* Family-specific colors - Yellow theme */
+    --family-warm: 255 247 201; /* Light yellow */
     --family-warm-foreground: 30 30 45;
-    --family-love: 255 255 255;
+    --family-love: 255 240 160; /* Medium yellow */
     --family-love-foreground: 30 30 45;
-    --family-connection: 241 245 249;
+    --family-connection: 255 233 121; /* Brighter yellow */
     --family-connection-foreground: 30 30 45;
   }
 
@@ -91,15 +91,79 @@
 @layer utilities {
   .family-gradient {
     background: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--accent)) 100%);
+    animation: gradient-shift 8s ease infinite;
+    background-size: 200% 200%;
   }
   
   .warm-gradient {
     background: linear-gradient(135deg, hsl(var(--family-warm)) 0%, hsl(var(--family-love)) 100%);
     border: 1px solid hsl(var(--border));
+    transition: all 0.3s ease;
+  }
+  
+  .warm-gradient:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
   }
   
   .connection-gradient {
     background: linear-gradient(135deg, hsl(var(--family-connection)) 0%, hsl(var(--primary)) 100%);
     border: 1px solid hsl(var(--border));
+    animation: gradient-shift 6s ease infinite;
+    background-size: 200% 200%;
+  }
+  
+  /* Animation keyframes */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @keyframes gradient-shift {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+  
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.7;
+    }
+  }
+  
+  /* Animation classes */
+  .animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+  }
+  
+  .animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+  
+  .transition-all {
+    transition: all 0.3s ease;
+  }
+  
+  .hover-scale {
+    transition: transform 0.2s ease;
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.03);
   }
 }
