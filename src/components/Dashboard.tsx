@@ -1,5 +1,5 @@
 
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,81 +12,36 @@ import FamilySelector from './FamilySelector';
 import FamilyMemberCard from './FamilyMemberCard';
 import AddMemberModal from './AddMemberModal';
 import MediaGallery from './MediaGallery';
-import FamilyTreeView from './FamilyTreeView';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [families, setFamilies] = React.useState<Family[]>([]);
-  const [selectedFamily, setSelectedFamily] = React.useState<Family | null>(null);
-  const [searchTerm, setSearchTerm] = React.useState('');
-  const [isAddModalOpen, setIsAddModalOpen] = React.useState(false);
-  const [filteredMembers, setFilteredMembers] = React.useState<FamilyMember[]>([]);
-  const [mediaItems, setMediaItems] = React.useState<MediaItem[]>([]);
+  const [families, setFamilies] = useState<Family[]>([]);
+  const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [filteredMembers, setFilteredMembers] = useState<FamilyMember[]>([]);
+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Load families from localStorage
     const savedFamilies = localStorage.getItem('family-directory-families');
-    if (!savedFamilies) {
-      const sampleFamily: Family = {
-        id: '1',
-        name: 'My Family',
-        description: 'Our main family tree',
-        createdBy: 'user1',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        members: [],
-        relationships: [],
-        isActive: true
-      };
-      setFamilies([sampleFamily]);
-      setSelectedFamily(sampleFamily);
-      localStorage.setItem('family-directory-families', JSON.stringify([sampleFamily]));
-    } else {
-      try {
-        const parsedFamilies = JSON.parse(savedFamilies).map((family: any) => ({
-          ...family,
-          relationships: family.relationships || [],
-          createdAt: new Date(family.createdAt),
-          updatedAt: new Date(family.updatedAt),
-          members: (family.members || []).map((member: any) => ({
-            ...member,
-            relationships: member.relationships || [],
-            dateOfBirth: member.dateOfBirth ? new Date(member.dateOfBirth) : null,
-          })),
-          isActive: family.isActive !== undefined ? family.isActive : true,
-        }));
-        
-        setFamilies(parsedFamilies);
-        
-        // Try to select the last selected family, or the first active one
-        const lastSelectedFamilyId = localStorage.getItem('lastSelectedFamilyId');
-        const activeFamilies = parsedFamilies.filter((f: Family) => f.isActive !== false);
-        let familyToSelect;
-        
-        if (lastSelectedFamilyId) {
-          familyToSelect = activeFamilies.find((f: Family) => f.id === lastSelectedFamilyId);
-        }
-        
-        if (!familyToSelect && activeFamilies.length > 0) {
-          familyToSelect = activeFamilies[0];
-        }
-        
-        if (familyToSelect) {
-          setSelectedFamily(familyToSelect);
-        }
-      } catch (error) {
-        console.error('Error parsing saved families:', error);
+    if (savedFamilies) {
+      const parsedFamilies = JSON.parse(savedFamilies);
+      setFamilies(parsedFamilies);
+      if (parsedFamilies.length > 0) {
+        setSelectedFamily(parsedFamilies[0]);
       }
     }
-  }, []);
 
-  React.useEffect(() => {
+    // Load media items from localStorage
     const savedMedia = localStorage.getItem('family-directory-media');
     if (savedMedia) {
       setMediaItems(JSON.parse(savedMedia));
     }
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
+    // Filter members based on search term and selected family
     if (selectedFamily) {
       const filtered = selectedFamily.members.filter(member =>
         member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,28 +55,21 @@ const Dashboard: React.FC = () => {
     }
   }, [searchTerm, selectedFamily]);
 
-  const handleCreateFamily = (newFamily: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => {
+  const handleCreateFamily = (newFamilyData: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => {
     const family: Family = {
-      ...newFamily,
+      ...newFamilyData,
       id: Date.now().toString(),
+      createdBy: user?.id || '',
       createdAt: new Date(),
       updatedAt: new Date(),
-      members: [],
-      relationships: [],
-      isActive: true
+      members: []
     };
+
     const updatedFamilies = [...families, family];
     setFamilies(updatedFamilies);
-    setSelectedFamily(family);
     localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-    return family;
-  };
-
-  const handleSelectFamily = React.useCallback((family: Family) => {
     setSelectedFamily(family);
-    // Save the selected family ID to localStorage
-    localStorage.setItem('lastSelectedFamilyId', family.id);
-  }, []);
+  };
 
   const handleDeleteFamily = (familyId: string) => {
     const updatedFamilies = families.filter(family => family.id !== familyId);
@@ -132,6 +80,7 @@ const Dashboard: React.FC = () => {
       setSelectedFamily(updatedFamilies.length > 0 ? updatedFamilies[0] : null);
     }
 
+    // Remove media items for this family
     const updatedMedia = mediaItems.filter(item => item.familyId !== familyId);
     setMediaItems(updatedMedia);
     localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
@@ -257,9 +206,9 @@ const Dashboard: React.FC = () => {
             </div>
             
             <div className="flex items-center space-x-2">
-              <div className="px-3 py-1 text-xs rounded-full bg-primary/10 text-primary">
+              <Badge variant={user?.familyRole === 'admin' ? 'default' : 'secondary'}>
                 {user?.familyRole === 'admin' ? 'Admin' : 'Member'}
-              </div>
+              </Badge>
               <Button variant="outline" onClick={logout}>
                 Sign Out
               </Button>
@@ -282,10 +231,9 @@ const Dashboard: React.FC = () => {
         ) : (
           <Tabs defaultValue="members" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <TabsList className="grid w-full max-w-2xl grid-cols-4">
+              <TabsList className="grid w-full max-w-md grid-cols-3">
                 <TabsTrigger value="families">Families</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
-                <TabsTrigger value="family-tree">Family Tree</TabsTrigger>
                 <TabsTrigger value="media">Media</TabsTrigger>
               </TabsList>
             </div>
@@ -406,33 +354,6 @@ const Dashboard: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
-            </TabsContent>
-
-            <TabsContent value="family-tree" className="space-y-6">
-              <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm overflow-hidden">
-                <CardContent className="p-0">
-                  {selectedFamily ? (
-                    <FamilyTreeView
-                      families={families.filter(f => f.isActive !== false)}
-                      selectedFamily={selectedFamily}
-                      onSelectFamily={handleSelectFamily}
-                      onUpdateMember={handleUpdateMember}
-                      onDeleteMember={handleDeleteMember}
-                      canEdit={user?.familyRole === 'admin'}
-                    />
-                  ) : (
-                    <div className="flex flex-col items-center justify-center p-12 text-center">
-                      <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                      <h3 className="text-lg font-semibold text-foreground mb-2">
-                        No family selected
-                      </h3>
-                      <p className="text-muted-foreground mb-4">
-                        Select or create a family to view the family tree
-                      </p>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
             </TabsContent>
 
             <TabsContent value="media">
