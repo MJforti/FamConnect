@@ -30,7 +30,7 @@
     --muted-foreground: 115 115 115; /* Medium gray text */
 
     /* Accent colors - Subtle beige for accents */
-    --accent: 235 231 226; /* Warm beige */
+    --accent: 0 0 0; /* Black */
     --accent-foreground: 51 51 51; /* Charcoal text */
 
     /* Destructive colors */
