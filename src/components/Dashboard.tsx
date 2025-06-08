@@ -12,6 +12,7 @@ import FamilySelector from './FamilySelector';
 import FamilyMemberCard from './FamilyMemberCard';
 import AddMemberModal from './AddMemberModal';
 import MediaGallery from './MediaGallery';
+import FamilyTree from './FamilyTree';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -231,9 +232,10 @@ const Dashboard: React.FC = () => {
         ) : (
           <Tabs defaultValue="members" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <TabsList className="grid w-full max-w-md grid-cols-3">
+              <TabsList className="grid w-full max-w-2xl grid-cols-4">
                 <TabsTrigger value="families">Families</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
+                <TabsTrigger value="family-tree">Family Tree</TabsTrigger>
                 <TabsTrigger value="media">Media</TabsTrigger>
               </TabsList>
             </div>
@@ -354,6 +356,25 @@ const Dashboard: React.FC = () => {
                   </CardContent>
                 </Card>
               )}
+            </TabsContent>
+
+            <TabsContent value="family-tree" className="space-y-6">
+              <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle>Family Tree</CardTitle>
+                  <CardDescription>Visualize your family relationships</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="min-h-[600px] rounded-lg border p-4">
+                    <FamilyTree 
+                      members={selectedFamily.members} 
+                      onUpdateMember={handleUpdateMember} 
+                      onDeleteMember={handleDeleteMember} 
+                      canEdit={user?.familyRole === 'admin'}
+                    />
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="media">
