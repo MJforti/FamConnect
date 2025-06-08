@@ -1,13 +1,34 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React, { useState } from 'react';
+import { AuthProvider, useAuth } from '@/contexts/AuthContext';
+import LandingPage from '@/components/LandingPage';
+import AuthModal from '@/components/AuthModal';
+import Dashboard from '@/components/Dashboard';
+
+const AppContent: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+  const [showAuthModal, setShowAuthModal] = useState(false);
+
+  if (isAuthenticated) {
+    return <Dashboard />;
+  }
+
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
-      </div>
-    </div>
+    <>
+      <LandingPage onShowAuth={() => setShowAuthModal(true)} />
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
+    </>
+  );
+};
+
+const Index: React.FC = () => {
+  return (
+    <AuthProvider>
+      <AppContent />
+    </AuthProvider>
   );
 };
 
