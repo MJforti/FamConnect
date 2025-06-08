@@ -55,8 +55,18 @@ const FamilyMemberCard: React.FC<FamilyMemberCardProps> = ({
         <CardHeader className="pb-3">
           <div className="flex items-start justify-between">
             <div className="flex items-center space-x-3">
-              <div className="w-12 h-12 family-gradient rounded-full flex items-center justify-center">
-                <User className="w-6 h-6 text-white" />
+              <div className="w-12 h-12 rounded-full flex items-center justify-center overflow-hidden border-2 border-border bg-muted">
+                {member.photoUrl ? (
+                  <img 
+                    src={member.photoUrl} 
+                    alt={member.fullName}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full family-gradient flex items-center justify-center">
+                    <User className="w-6 h-6 text-white" />
+                  </div>
+                )}
               </div>
               <div>
                 <CardTitle className="text-lg">{member.fullName}</CardTitle>

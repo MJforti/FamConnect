@@ -37,13 +37,13 @@
 
     --radius: 0.75rem;
 
-    /* Family-specific colors */
-    --family-warm: 251 146 60;
-    --family-warm-foreground: 255 255 255;
-    --family-love: 236 72 153;
-    --family-love-foreground: 255 255 255;
-    --family-connection: 16 185 129;
-    --family-connection-foreground: 255 255 255;
+    /* Family-specific colors - Updated to white theme */
+    --family-warm: 255 255 255;
+    --family-warm-foreground: 30 30 45;
+    --family-love: 255 255 255;
+    --family-love-foreground: 30 30 45;
+    --family-connection: 255 255 255;
+    --family-connection-foreground: 30 30 45;
   }
 
   .dark {
@@ -95,9 +95,11 @@
   
   .warm-gradient {
     background: linear-gradient(135deg, hsl(var(--family-warm)) 0%, hsl(var(--family-love)) 100%);
+    border: 1px solid hsl(var(--border));
   }
   
   .connection-gradient {
     background: linear-gradient(135deg, hsl(var(--family-connection)) 0%, hsl(var(--primary)) 100%);
+    border: 1px solid hsl(var(--border));
   }
 }

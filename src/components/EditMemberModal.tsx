@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FamilyMember } from '@/types';
 import { Edit, User, Calendar, Mail, Phone, MapPin } from 'lucide-react';
+import PhotoUpload from './PhotoUpload';
 
 interface EditMemberModalProps {
   isOpen: boolean;
@@ -30,6 +31,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({ isOpen, onClose, memb
     phone: '',
     address: '',
     notes: '',
+    photoUrl: undefined as string | undefined,
   });
 
   useEffect(() => {
@@ -42,6 +44,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({ isOpen, onClose, memb
         phone: member.contactInfo.phone || '',
         address: member.contactInfo.address || '',
         notes: member.notes,
+        photoUrl: member.photoUrl,
       });
     }
   }, [member]);
@@ -60,6 +63,7 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({ isOpen, onClose, memb
         address: formData.address || undefined,
       },
       notes: formData.notes,
+      photoUrl: formData.photoUrl,
     };
 
     onUpdate(updatedMember);
@@ -70,12 +74,16 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({ isOpen, onClose, memb
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
+  const handlePhotoChange = (photoUrl: string | undefined) => {
+    setFormData(prev => ({ ...prev, photoUrl }));
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-2xl border-0 shadow-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader className="text-center">
           <div className="mx-auto mb-4 p-3 connection-gradient rounded-full w-fit">
-            <Edit className="w-8 h-8 text-white" />
+            <Edit className="w-8 h-8 text-family-connection-foreground" />
           </div>
           <DialogTitle className="text-2xl font-bold">Edit Family Member</DialogTitle>
           <DialogDescription>
@@ -84,6 +92,12 @@ const EditMemberModal: React.FC<EditMemberModalProps> = ({ isOpen, onClose, memb
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Photo Upload */}
+          <PhotoUpload
+            currentPhoto={formData.photoUrl}
+            onPhotoChange={handlePhotoChange}
+          />
+
           {/* Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>

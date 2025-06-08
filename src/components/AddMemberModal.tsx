@@ -8,6 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { FamilyMember } from '@/types';
 import { Users, User, Calendar, Mail, Phone, MapPin } from 'lucide-react';
+import PhotoUpload from './PhotoUpload';
 
 interface AddMemberModalProps {
   isOpen: boolean;
@@ -29,6 +30,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
     phone: '',
     address: '',
     notes: '',
+    photoUrl: undefined as string | undefined,
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -44,6 +46,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
         address: formData.address || undefined,
       },
       notes: formData.notes,
+      photoUrl: formData.photoUrl,
       relationships: [],
     };
 
@@ -58,6 +61,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
       phone: '',
       address: '',
       notes: '',
+      photoUrl: undefined,
     });
     
     onClose();
@@ -65,6 +69,10 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
 
   const handleInputChange = (field: string, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePhotoChange = (photoUrl: string | undefined) => {
+    setFormData(prev => ({ ...prev, photoUrl }));
   };
 
   return (
@@ -81,6 +89,12 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Photo Upload */}
+          <PhotoUpload
+            currentPhoto={formData.photoUrl}
+            onPhotoChange={handlePhotoChange}
+          />
+
           {/* Basic Information */}
           <div className="space-y-4">
             <h3 className="text-lg font-semibold text-foreground">Basic Information</h3>
