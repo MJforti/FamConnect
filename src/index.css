@@ -7,71 +7,92 @@
 
 @layer base {
   :root {
-    --background-color: 80 70 60; /* Dark beige background */
-    --foreground: 20 20 20; /* Black text */
-    --card: 100 90 80; /* Slightly lighter dark beige for cards */
-    --card-foreground: 20 20 20; /* Black text on cards */
-    --popover: 90 80 70; /* Dark beige for popovers */
-    --popover-foreground: 20 20 20; /* Black text on popovers */
+    /* Base colors */
+    --background: 250 250 250; /* Light gray background */
+    --foreground: 15 23 42; /* Dark blue-gray text */
+    --card: 255 255 255; /* White cards */
+    --card-foreground: 15 23 42; /* Dark text on cards */
+    --popover: 255 255 255; /* White popovers */
+    --popover-foreground: 15 23 42; /* Dark text on popovers */
 
-    --primary: 140 120 100; /* Medium dark beige for primary buttons */
-    --primary-foreground: 20 20 20; /* Black text on primary buttons */
+    /* Primary - Vibrant teal */
+    --primary: 20 184 166; /* Teal */
+    --primary-foreground: 255 255 255; /* White text */
 
-    --secondary: 120 110 100; /* Darker beige for secondary buttons */
-    --secondary-foreground: 20 20 20; /* Black text on secondary buttons */
+    /* Secondary - Soft purple */
+    --secondary: 168 85 247; /* Purple */
+    --secondary-foreground: 255 255 255; /* White text */
 
-    --muted: 90 80 70; /* Dark beige for muted elements */
-    --muted-foreground: 40 40 40; /* Slightly lighter black for muted text */
+    /* Muted - Subtle gray */
+    --muted: 241 245 249; /* Light gray */
+    --muted-foreground: 100 116 139; /* Slate gray text */
 
-    --accent: 160 140 120; /* Lighter beige for accents */
-    --accent-foreground: 20 20 20; /* Black text on accents */
+    /* Accent - Coral */
+    --accent: 255 107 107; /* Coral */
+    --accent-foreground: 255 255 255; /* White text */
 
-    --destructive: 180 60 50; /* Dark red for destructive actions */
-    --destructive-foreground: 255 255 255; /* White text on destructive */
+    /* Destructive - Red */
+    --destructive: 239 68 68; /* Red */
+    --destructive-foreground: 255 255 255; /* White text */
 
-    --border: 110 100 90; /* Dark beige borders */
-    --input: 100 90 80; /* Dark beige inputs */
-    --ring: 160 140 120; /* Accent color for focus rings */
+    /* UI Elements */
+    --border: 226 232 240; /* Light gray border */
+    --input: 226 232 240; /* Light gray input */
+    --ring: 20 184 166; /* Teal ring to match primary */
+    --radius: 0.75rem; /* Border radius */
 
-    --radius: 0.75rem;
-
-    /* Family-specific colors - Dark beige theme */
-    --family-warm: 100 90 80; /* Dark beige */
-    --family-warm-foreground: 20 20 20; /* Black text */
-    --family-love: 120 110 100; /* Slightly lighter dark beige */
-    --family-love-foreground: 20 20 20; /* Black text */
-    --family-connection: 140 130 120; /* Medium dark beige */
-    --family-connection-foreground: 20 20 20; /* Black text */
+    /* Family-specific colors - Vibrant theme */
+    --family-warm: 249 168 212; /* Pink */
+    --family-warm-foreground: 15 23 42; /* Dark text */
+    --family-love: 147 197 253; /* Light blue */
+    --family-love-foreground: 15 23 42; /* Dark text */
+    --family-connection: 134 239 172; /* Mint */
+    --family-connection-foreground: 15 23 42; /* Dark text */
   }
 
   .dark {
-    --background: 50 45 40; /* Darker beige for dark mode */
-    --foreground: 240 240 240; /* Light text for better contrast */
+    /* Dark mode base colors */
+    --background: 15 23 42; /* Dark blue background */
+    --foreground: 241 245 249; /* Light gray text */
 
-    --card: 60 55 50; /* Slightly lighter than background */
-    --card-foreground: 240 240 240; /* Light text */
+    --card: 30 41 59; /* Slightly lighter dark blue for cards */
+    --card-foreground: 241 245 249; /* Light text */
 
-    --popover: 55 50 45; /* Slightly lighter than background */
-    --popover-foreground: 240 240 240; /* Light text */
+    --popover: 30 41 59; /* Slightly lighter dark blue for popovers */
+    --popover-foreground: 241 245 249; /* Light text */
 
-    --primary: 120 100 80; /* Warm beige for primary actions */
-    --primary-foreground: 240 240 240; /* Light text */
+    /* Primary - Brighter teal for dark mode */
+    --primary: 20 184 166; /* Teal */
+    --primary-foreground: 15 23 42; /* Dark text */
 
-    --secondary: 90 80 70; /* Dark beige for secondary actions */
-    --secondary-foreground: 240 240 240; /* Light text */
+    /* Secondary - Brighter purple for dark mode */
+    --secondary: 192 132 252; /* Lighter purple */
+    --secondary-foreground: 15 23 42; /* Dark text */
 
-    --muted: 55 50 45; /* Dark beige for muted elements */
-    --muted-foreground: 180 180 180; /* Light gray for muted text */
+    /* Muted - Darker gray for dark mode */
+    --muted: 30 41 59; /* Dark blue-gray */
+    --muted-foreground: 148 163 184; /* Lighter gray text */
 
-    --accent: 140 120 100; /* Lighter beige for accents */
-    --accent-foreground: 240 240 240; /* Light text */
+    /* Accent - Brighter coral for dark mode */
+    --accent: 255 138 138; /* Lighter coral */
+    --accent-foreground: 15 23 42; /* Dark text */
 
-    --destructive: 180 60 50; /* Dark red for destructive actions */
+    /* Destructive - Brighter red for dark mode */
+    --destructive: 239 68 68; /* Red */
     --destructive-foreground: 255 255 255; /* White text */
 
-    --border: 70 65 60; /* Slightly lighter border */
-    --input: 70 65 60; /* Slightly lighter input */
-    --ring: 140 120 100; /* Accent color for focus rings */
+    /* UI Elements */
+    --border: 51 65 85; /* Dark blue border */
+    --input: 51 65 85; /* Dark blue input */
+    --ring: 20 184 166; /* Teal ring to match primary */
+
+    /* Family-specific colors - Dark mode */
+    --family-warm: 219 39 119; /* Darker pink */
+    --family-warm-foreground: 241 245 249; /* Light text */
+    --family-love: 59 130 246; /* Darker blue */
+    --family-love-foreground: 241 245 249; /* Light text */
+    --family-connection: 16 185 129; /* Darker mint */
+    --family-connection-foreground: 15 23 42; /* Dark text */
   }
 }
 
