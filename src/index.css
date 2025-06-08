@@ -7,80 +7,71 @@
 
 @layer base {
   :root {
-    /* Base colors - Inspired by Zara's minimalist aesthetic */
-    --background-color: 255 255 255; /* Pure white background */
-    --foreground: 17 17 17; /* Near-black for text */
-    
-    /* Surface colors */
-    --card: 250 250 250; /* Slightly off-white for cards */
-    --card-foreground: 17 17 17; /* Near-black text */
-    --popover: 255 255 255; /* White popovers */
-    --popover-foreground: 17 17 17; /* Near-black text */
+    --background-color: 80 70 60; /* Dark beige background */
+    --foreground: 20 20 20; /* Black text */
+    --card: 100 90 80; /* Slightly lighter dark beige for cards */
+    --card-foreground: 20 20 20; /* Black text on cards */
+    --popover: 90 80 70; /* Dark beige for popovers */
+    --popover-foreground: 20 20 20; /* Black text on popovers */
 
-    /* Primary colors - Deep charcoal for main actions */
-    --primary: 51 51 51; /* Charcoal */
-    --primary-foreground: 255 255 255; /* White text */
+    --primary: 140 120 100; /* Medium dark beige for primary buttons */
+    --primary-foreground: 20 20 20; /* Black text on primary buttons */
 
-    /* Secondary colors - Light gray for secondary actions */
-    --secondary: 245 245 245; /* Light gray */
-    --secondary-foreground: 51 51 51; /* Charcoal text */
+    --secondary: 120 110 100; /* Darker beige for secondary buttons */
+    --secondary-foreground: 20 20 20; /* Black text on secondary buttons */
 
-    /* Muted colors */
-    --muted: 250 250 250; /* Off-white */
-    --muted-foreground: 115 115 115; /* Medium gray text */
+    --muted: 90 80 70; /* Dark beige for muted elements */
+    --muted-foreground: 40 40 40; /* Slightly lighter black for muted text */
 
-    /* Accent colors - Subtle beige for accents */
-    --accent: 0 0 0; /* Black */
-    --accent-foreground: 51 51 51; /* Charcoal text */
+    --accent: 160 140 120; /* Lighter beige for accents */
+    --accent-foreground: 20 20 20; /* Black text on accents */
 
-    /* Destructive colors */
-    --destructive: 185 28 28; /* Deep red */
-    --destructive-foreground: 255 255 255; /* White text */
+    --destructive: 180 60 50; /* Dark red for destructive actions */
+    --destructive-foreground: 255 255 255; /* White text on destructive */
 
-    /* UI Elements */
-    --border: 229 229 229; /* Light gray border */
-    --input: 229 229 229; /* Light gray input */
-    --ring: 156 163 175; /* Subtle focus ring */
+    --border: 110 100 90; /* Dark beige borders */
+    --input: 100 90 80; /* Dark beige inputs */
+    --ring: 160 140 120; /* Accent color for focus rings */
 
-    --radius: 0.25rem; /* Sharp corners for modern look */
+    --radius: 0.75rem;
 
-    /* Family-specific colors - Neutral tones */
-    --family-warm: 245 243 240; /* Warm off-white */
-    --family-warm-foreground: 17 17 17; /* Near-black text */
-    --family-love: 240 240 240; /* Cool off-white */
-    --family-love-foreground: 17 17 17; /* Near-black text */
-    --family-connection: 250 250 250; /* Pure white */
-    --family-connection-foreground: 17 17 17; /* Near-black text */
+    /* Family-specific colors - Dark beige theme */
+    --family-warm: 100 90 80; /* Dark beige */
+    --family-warm-foreground: 20 20 20; /* Black text */
+    --family-love: 120 110 100; /* Slightly lighter dark beige */
+    --family-love-foreground: 20 20 20; /* Black text */
+    --family-connection: 140 130 120; /* Medium dark beige */
+    --family-connection-foreground: 20 20 20; /* Black text */
   }
 
   .dark {
-    /* Dark mode - Deep charcoal theme */
-    --background: 10 10 10; /* Near-black background */
-    --foreground: 245 245 245; /* Off-white text */
+    --background: 50 45 40; /* Darker beige for dark mode */
+    --foreground: 240 240 240; /* Light text for better contrast */
 
-    --card: 20 20 20; /* Slightly lighter than background */
-    --card-foreground: 245 245 245; /* Off-white text */
-    --popover: 15 15 15; /* Slightly darker than card */
-    --popover-foreground: 245 245 245; /* Off-white text */
+    --card: 60 55 50; /* Slightly lighter than background */
+    --card-foreground: 240 240 240; /* Light text */
 
-    --primary: 255 255 255; /* White for primary actions */
-    --primary-foreground: 10 10 10; /* Black text */
+    --popover: 55 50 45; /* Slightly lighter than background */
+    --popover-foreground: 240 240 240; /* Light text */
 
-    --secondary: 38 38 38; /* Dark gray */
-    --secondary-foreground: 245 245 245; /* Off-white text */
+    --primary: 120 100 80; /* Warm beige for primary actions */
+    --primary-foreground: 240 240 240; /* Light text */
 
-    --muted: 23 23 23; /* Dark gray for muted */
-    --muted-foreground: 163 163 163; /* Medium gray text */
+    --secondary: 90 80 70; /* Dark beige for secondary actions */
+    --secondary-foreground: 240 240 240; /* Light text */
 
-    --accent: 38 38 38; /* Dark gray for accents */
-    --accent-foreground: 245 245 245; /* Off-white text */
+    --muted: 55 50 45; /* Dark beige for muted elements */
+    --muted-foreground: 180 180 180; /* Light gray for muted text */
 
-    --destructive: 127 29 29; /* Darker red for dark mode */
-    --destructive-foreground: 254 226 226; /* Light red text */
+    --accent: 140 120 100; /* Lighter beige for accents */
+    --accent-foreground: 240 240 240; /* Light text */
 
-    --border: 38 38 38; /* Dark gray border */
-    --input: 38 38 38; /* Dark gray input */
-    --ring: 107 114 128; /* Subtle gray focus ring */
+    --destructive: 180 60 50; /* Dark red for destructive actions */
+    --destructive-foreground: 255 255 255; /* White text */
+
+    --border: 70 65 60; /* Slightly lighter border */
+    --input: 70 65 60; /* Slightly lighter input */
+    --ring: 140 120 100; /* Accent color for focus rings */
   }
 }
 
