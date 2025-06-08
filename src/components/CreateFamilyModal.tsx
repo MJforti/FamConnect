@@ -1,23 +1,16 @@
+
 import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
 import { Family } from '@/types';
-import { Image as ImageIcon, Globe, Lock } from 'lucide-react';
 
 interface CreateFamilyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (family: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members' | 'relatedFamilies'>) => void;
-}
-interface FamilyFormData {
-  name: string;
-  description: string;
-  coverImage: string;
-  isPublic: boolean;
+  onCreate: (family: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => void;
 }
 
 const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
@@ -25,11 +18,9 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
   onClose,
   onCreate
 }) => {
-  const [formData, setFormData] = useState<FamilyFormData>({
+  const [formData, setFormData] = useState({
     name: '',
-    description: '',
-    coverImage: '',
-    isPublic: false
+    description: ''
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -40,27 +31,15 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
     onCreate({
       name: formData.name.trim(),
       description: formData.description.trim() || undefined,
-      coverImage: formData.coverImage.trim() || undefined,
-      isPublic: formData.isPublic,
-      createdBy: ''
+      createdBy: '' // Will be set by parent component
     });
 
-    setFormData({ 
-      name: '', 
-      description: '',
-      coverImage: '',
-      isPublic: false 
-    });
+    setFormData({ name: '', description: '' });
     onClose();
   };
 
   const handleClose = () => {
-    setFormData({ 
-      name: '', 
-      description: '',
-      coverImage: '',
-      isPublic: false 
-    });
+    setFormData({ name: '', description: '' });
     onClose();
   };
 
@@ -71,75 +50,30 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
           <DialogTitle>Create New Family</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">Family Name *</Label>
+            <Label htmlFor="familyName">Family Name *</Label>
             <Input
-              id="name"
-              placeholder="Enter family name"
+              id="familyName"
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              placeholder="e.g., The Smith Family"
               required
-              className="bg-background"
             />
           </div>
-          
+
           <div className="space-y-2">
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="familyDescription">Description</Label>
             <Textarea
-              id="description"
-              placeholder="Tell us about this family (optional)"
-              rows={3}
+              id="familyDescription"
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              className="bg-background min-h-[100px]"
+              placeholder="A brief description of this family branch..."
+              rows={3}
             />
           </div>
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="coverImage">Cover Image URL</Label>
-              <span className="text-xs text-muted-foreground">Optional</span>
-            </div>
-            <div className="relative">
-              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                <ImageIcon className="h-4 w-4 text-muted-foreground" />
-              </div>
-              <Input
-                id="coverImage"
-                type="url"
-                placeholder="https://example.com/cover.jpg"
-                value={formData.coverImage}
-                onChange={(e) => setFormData(prev => ({ ...prev, coverImage: e.target.value }))}
-                className="pl-10 bg-background"
-              />
-            </div>
-          </div>
-
-          <div className="flex items-center justify-between rounded-lg border p-4">
-            <div className="space-y-0.5">
-              <Label htmlFor="isPublic" className="flex items-center gap-2">
-                {formData.isPublic ? (
-                  <Globe className="h-4 w-4 text-blue-500" />
-                ) : (
-                  <Lock className="h-4 w-4 text-muted-foreground" />
-                )}
-                <span>Make this family public</span>
-              </Label>
-              <p className="text-sm text-muted-foreground">
-                {formData.isPublic 
-                  ? 'Anyone with the link can view this family' 
-                  : 'Only invited members can view this family'}
-              </p>
-            </div>
-            <Switch
-              id="isPublic"
-              checked={formData.isPublic}
-              onCheckedChange={(checked) => setFormData(prev => ({ ...prev, isPublic: checked }))}
-            />
-          </div>
-
-          <DialogFooter className="pt-4">
+          <div className="flex justify-end space-x-2 pt-4">
             <Button type="button" variant="outline" onClick={handleClose}>
               Cancel
             </Button>
@@ -150,7 +84,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
             >
               Create Family
             </Button>
-          </DialogFooter>
+          </div>
         </form>
       </DialogContent>
     </Dialog>
