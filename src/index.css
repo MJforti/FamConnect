@@ -37,12 +37,12 @@
 
     --radius: 0.75rem;
 
-    /* Family-specific colors - Updated to white theme */
-    --family-warm: 255 255 255;
+    /* Family-specific colors - Clean neutral palette */
+    --family-warm: 248 250 252;
     --family-warm-foreground: 30 30 45;
     --family-love: 255 255 255;
     --family-love-foreground: 30 30 45;
-    --family-connection: 255 255 255;
+    --family-connection: 241 245 249;
     --family-connection-foreground: 30 30 45;
   }
 
