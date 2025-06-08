@@ -7,6 +7,16 @@ export interface User {
   createdAt: Date;
 }
 
+export interface Family {
+  id: string;
+  name: string;
+  description?: string;
+  createdBy: string;
+  createdAt: Date;
+  updatedAt: Date;
+  members: FamilyMember[];
+}
+
 export interface FamilyMember {
   id: string;
   fullName: string;
@@ -20,6 +30,7 @@ export interface FamilyMember {
   notes: string;
   photoUrl?: string;
   relationships: Relationship[];
+  familyId: string;
   createdBy: string;
   createdAt: Date;
   updatedAt: Date;
@@ -29,6 +40,19 @@ export interface Relationship {
   memberId: string;
   relationType: 'parent' | 'child' | 'sibling' | 'spouse' | 'grandparent' | 'grandchild' | 'uncle' | 'aunt' | 'cousin' | 'other';
   description?: string;
+}
+
+export interface MediaItem {
+  id: string;
+  title: string;
+  description?: string;
+  type: 'image' | 'video';
+  url: string;
+  thumbnail?: string;
+  familyId: string;
+  uploadedBy: string;
+  createdAt: Date;
+  tags: string[];
 }
 
 export interface AuthState {
