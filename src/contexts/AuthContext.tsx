@@ -81,12 +81,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return false;
       }
 
+      const familyRole: 'admin' | 'member' = mockUsers.length === 0 ? 'admin' : 'member';
+
       const newUser = {
         id: Date.now().toString(),
         email,
         password,
         fullName,
-        familyRole: mockUsers.length === 0 ? 'admin' : 'member', // First user becomes admin
+        familyRole,
         createdAt: new Date(),
       };
 
