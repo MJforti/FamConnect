@@ -38,7 +38,7 @@
     --radius: 0.75rem;
 
     /* Family-specific colors - Clean neutral palette */
-    --family-warm: 248 250 252;
+    --family-warm: 245 245 220; /* Beige color (#F5F5DC) */
     --family-warm-foreground: 30 30 45;
     --family-love: 255 255 255;
     --family-love-foreground: 30 30 45;
