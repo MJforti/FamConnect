@@ -2,53 +2,43 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Family Directory Design System */
-
+ 
 @layer base {
   :root {
-    --background-color: 80 70 60; /* Dark beige background */
-    --foreground: 20 20 20; /* Black text */
-    --card: 100 90 80; /* Slightly lighter dark beige for cards */
-    --card-foreground: 20 20 20; /* Black text on cards */
-    --popover: 90 80 70; /* Dark beige for popovers */
-    --popover-foreground: 20 20 20; /* Black text on popovers */
-
-    --primary: 140 120 100; /* Medium dark beige for primary buttons */
-    --primary-foreground: 20 20 20; /* Black text on primary buttons */
-
-    --secondary: 120 110 100; /* Darker beige for secondary buttons */
-    --secondary-foreground: 20 20 20; /* Black text on secondary buttons */
-
-    --muted: 90 80 70; /* Dark beige for muted elements */
-    --muted-foreground: 40 40 40; /* Slightly lighter black for muted text */
-
-    --accent: 160 140 120; /* Lighter beige for accents */
-    --accent-foreground: 20 20 20; /* Black text on accents */
-
-    --destructive: 180 60 50; /* Dark red for destructive actions */
-    --destructive-foreground: 255 255 255; /* White text on destructive */
-
-    --border: 110 100 90; /* Dark beige borders */
-    --input: 100 90 80; /* Dark beige inputs */
-    --ring: 160 140 120; /* Accent color for focus rings */
-
+    --background: 80 70 60;
+    --foreground: 20 20 20;
+    --card: 100 90 80;
+    --card-foreground: 20 20 20;
+    --popover: 90 80 70;
+    --popover-foreground: 20 20 20;
+    --primary: 140 120 100;
+    --primary-foreground: 20 20 20;
+    --secondary: 120 110 100;
+    --secondary-foreground: 20 20 20;
+    --muted: 90 80 70;
+    --muted-foreground: 40 40 40;
+    --accent: 160 140 120;
+    --accent-foreground: 20 20 20;
+    --destructive: 180 60 50;
+    --destructive-foreground: 255 255 255;
+    --border: 110 100 90;
+    --input: 100 90 80;
+    --ring: 160 140 120;
     --radius: 0.75rem;
-
-    /* Family-specific colors - Dark beige theme */
-    --family-warm: 100 90 80; /* Dark beige */
-    --family-warm-foreground: 20 20 20; /* Black text */
-    --family-love: 120 110 100; /* Slightly lighter dark beige */
-    --family-love-foreground: 20 20 20; /* Black text */
-    --family-connection: 140 130 120; /* Medium dark beige */
-    --family-connection-foreground: 20 20 20; /* Black text */
+    
+    /* Custom theme colors */
+    --family-warm: 100 90 80;
+    --family-warm-foreground: 20 20 20;
+    --family-love: 120 110 100;
+    --family-love-foreground: 20 20 20;
+    --family-connection: 140 130 120;
+    --family-connection-foreground: 20 20 20;
   }
-
+ 
   .dark {
-    --background: 50 45 40; /* Darker beige for dark mode */
-    --foreground: 240 240 240; /* Light text for better contrast */
-
-    --card: 60 55 50; /* Slightly lighter than background */
+    --background: 50 45 40;
+    --foreground: 240 240 240;
+    --card: 60 55 50;
     --card-foreground: 240 240 240; /* Light text */
 
     --popover: 55 50 45; /* Slightly lighter than background */
