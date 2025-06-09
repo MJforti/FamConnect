@@ -65,7 +65,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onShowAuth }) => {
           <div className="animate-fade-in">
             <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
               Keep Your Family
-              <span className="block bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+              <span className="block text-gray-700 dark:text-gray-300">
                 Connected & Organized
               </span>
             </h2>
