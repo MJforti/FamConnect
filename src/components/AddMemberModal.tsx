@@ -13,7 +13,7 @@ import PhotoUpload from './PhotoUpload';
 interface AddMemberModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onAdd: (member: Omit<FamilyMember, 'id' | 'createdBy' | 'createdAt' | 'updatedAt'>) => void;
+  onAdd: (member: Omit<FamilyMember, 'id' | 'createdBy' | 'createdAt' | 'updatedAt' | 'familyId'>) => void;
 }
 
 const relationshipTypes = [
@@ -36,7 +36,7 @@ const AddMemberModal: React.FC<AddMemberModalProps> = ({ isOpen, onClose, onAdd 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
-    const newMember: Omit<FamilyMember, 'id' | 'createdBy' | 'createdAt' | 'updatedAt'> = {
+    const newMember: Omit<FamilyMember, 'id' | 'createdBy' | 'createdAt' | 'updatedAt' | 'familyId'> = {
       fullName: formData.fullName,
       dateOfBirth: new Date(formData.dateOfBirth),
       relation: formData.relation,
