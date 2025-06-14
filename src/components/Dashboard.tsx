@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-import { Users, Search, User } from 'lucide-react';
+import { Users, Search, User, Plus } from 'lucide-react';
 import { useFamilies } from '@/hooks/useFamilies';
 import { useFamilyMembers } from '@/hooks/useFamilyMembers';
 import FamilyTree from './FamilyTree';
@@ -16,9 +16,11 @@ import { useToast } from '@/hooks/use-toast';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const { families, createFamily, deleteFamily } = useFamilies();
+  const { families, loading: familiesLoading, createFamily, deleteFamily } = useFamilies();
   const [selectedFamily, setSelectedFamily] = useState<SupabaseFamily | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [newFamilyName, setNewFamilyName] = useState('');
+  const [isCreatingFamily, setIsCreatingFamily] = useState(false);
   const { toast } = useToast();
 
   const { 
@@ -36,20 +38,39 @@ const Dashboard: React.FC = () => {
     }
   }, [families, selectedFamily]);
 
-  const handleCreateFamily = async (name: string, description?: string) => {
+  const handleCreateFamily = async () => {
+    if (!newFamilyName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a family name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreatingFamily(true);
     try {
-      const newFamily = await createFamily({ name, description });
+      console.log('Creating family with name:', newFamilyName);
+      const newFamily = await createFamily({ 
+        name: newFamilyName.trim(), 
+        description: null 
+      });
+      console.log('Family created successfully:', newFamily);
       setSelectedFamily(newFamily);
+      setNewFamilyName('');
       toast({
         title: "Success",
         description: "Family created successfully",
       });
     } catch (error) {
+      console.error('Error creating family:', error);
       toast({
         title: "Error",
-        description: "Failed to create family",
+        description: error instanceof Error ? error.message : "Failed to create family",
         variant: "destructive",
       });
+    } finally {
+      setIsCreatingFamily(false);
     }
   };
 
@@ -91,6 +112,16 @@ const Dashboard: React.FC = () => {
     );
   }
 
+  if (familiesLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center">
+          <div className="text-muted-foreground">Loading your families...</div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -122,7 +153,7 @@ const Dashboard: React.FC = () => {
       </header>
 
       <div className="container mx-auto px-4 py-8">
-        {!selectedFamily ? (
+        {families.length === 0 ? (
           <Card className="max-w-md mx-auto">
             <CardHeader>
               <CardTitle>Create Your First Family</CardTitle>
@@ -134,23 +165,20 @@ const Dashboard: React.FC = () => {
               <div className="space-y-4">
                 <Input 
                   placeholder="Family name (e.g., Smith Family)"
+                  value={newFamilyName}
+                  onChange={(e) => setNewFamilyName(e.target.value)}
                   onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const target = e.target as HTMLInputElement;
-                      handleCreateFamily(target.value);
+                    if (e.key === 'Enter' && !isCreatingFamily) {
+                      handleCreateFamily();
                     }
                   }}
                 />
                 <Button 
                   className="w-full"
-                  onClick={(e) => {
-                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
-                    if (input.value.trim()) {
-                      handleCreateFamily(input.value.trim());
-                    }
-                  }}
+                  onClick={handleCreateFamily}
+                  disabled={isCreatingFamily}
                 >
-                  Create Family
+                  {isCreatingFamily ? 'Creating...' : 'Create Family'}
                 </Button>
               </div>
             </CardContent>
@@ -201,16 +229,25 @@ const Dashboard: React.FC = () => {
                     ))}
                     
                     <div className="pt-4 border-t">
-                      <Input 
-                        placeholder="New family name"
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') {
-                            const target = e.target as HTMLInputElement;
-                            handleCreateFamily(target.value);
-                            target.value = '';
-                          }
-                        }}
-                      />
+                      <div className="flex gap-2">
+                        <Input 
+                          placeholder="New family name"
+                          value={newFamilyName}
+                          onChange={(e) => setNewFamilyName(e.target.value)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' && !isCreatingFamily) {
+                              handleCreateFamily();
+                            }
+                          }}
+                        />
+                        <Button 
+                          onClick={handleCreateFamily}
+                          disabled={isCreatingFamily}
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          {isCreatingFamily ? 'Creating...' : 'Add'}
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -316,7 +353,7 @@ const Dashboard: React.FC = () => {
                     <p className="text-muted-foreground">
                       {searchTerm 
                         ? 'Try adjusting your search terms'
-                        : `Start building the ${selectedFamily.name} by adding family members`
+                        : `Start building the ${selectedFamily?.name} by adding family members`
                       }
                     </p>
                   </CardContent>
