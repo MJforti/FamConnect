@@ -11,82 +11,96 @@ interface LandingPageProps {
 const LandingPage: React.FC<LandingPageProps> = ({ onShowAuth }) => {
   const features = [
     {
-      icon: <Shield className="h-8 w-8 text-primary" />,
+      icon: <Shield className="h-8 w-8 text-retro-orange" />,
       title: "Secure & Private",
       description: "Individual login credentials ensure your family data stays protected and private."
     },
     {
-      icon: <Users className="h-8 w-8 text-accent" />,
+      icon: <Users className="h-8 w-8 text-retro-gold" />,
       title: "Relationship Mapping",
       description: "Visualize and connect family relationships dynamically with our intuitive interface."
     },
     {
-      icon: <Search className="h-8 w-8 text-family-warm" />,
+      icon: <Search className="h-8 w-8 text-retro-burnt" />,
       title: "Smart Search",
       description: "Quickly find family members by name, age, relation, or any other detail."
     },
     {
-      icon: <Cloud className="h-8 w-8 text-family-connection" />,
+      icon: <Cloud className="h-8 w-8 text-retro-orange" />,
       title: "Cloud Sync",
       description: "Access your family directory from any device with automatic synchronization."
     },
     {
-      icon: <Calendar className="h-8 w-8 text-family-love" />,
+      icon: <Calendar className="h-8 w-8 text-retro-gold" />,
       title: "Smart Reminders",
       description: "Never miss birthdays, anniversaries, or important family events again."
     },
     {
-      icon: <Heart className="h-8 w-8 text-destructive" />,
+      icon: <Heart className="h-8 w-8 text-retro-red" />,
       title: "Family First",
       description: "Designed with love for families of all sizes, from small to extended family networks."
     }
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted to-background">
+    <div className="min-h-screen bg-background font-retro">
       {/* Header */}
-      <header className="border-b border-[rgb(200,200,220)] bg-[rgb(230,230,250)]/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="retro-header sticky top-0 z-50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 family-gradient rounded-lg flex items-center justify-center">
-              <Users className="w-5 h-5 text-white" />
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 family-gradient rounded-lg flex items-center justify-center retro-shadow">
+              <Users className="w-6 h-6 text-white" />
             </div>
-            <h1 className="text-xl font-bold text-foreground">Family Directory</h1>
+            <h1 className="text-2xl font-bold retro-text font-retro-display tracking-wider">
+              FAMILY DIRECTORY
+            </h1>
           </div>
-          <Button onClick={onShowAuth} className="family-gradient hover:opacity-90">
-            Get Started
+          <Button 
+            onClick={onShowAuth} 
+            className="retro-button hover-scale font-retro font-bold px-6 py-2"
+          >
+            GET STARTED
           </Button>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="animate-fade-in">
-            <h2 className="text-5xl md:text-6xl font-bold text-foreground mb-6">
-              Keep Your Family
-              <span className="block text-gray-700 dark:text-gray-300">
-                Connected & Organized
+      <section className="py-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-20 left-20 w-32 h-32 rounded-full bg-retro-orange animate-retro-pulse"></div>
+          <div className="absolute bottom-20 right-20 w-24 h-24 rounded-full bg-retro-gold animate-retro-pulse"></div>
+          <div className="absolute top-1/2 left-1/3 w-16 h-16 rounded-full bg-retro-burnt animate-retro-pulse"></div>
+        </div>
+        
+        <div className="container mx-auto text-center relative z-10">
+          <div className="animate-fade-in-up">
+            <h2 className="text-6xl md:text-7xl font-bold retro-text mb-8 font-retro-display tracking-wider">
+              KEEP YOUR FAMILY
+              <span className="block text-retro-orange animate-retro-glow">
+                CONNECTED
+              </span>
+              <span className="block text-retro-gold">
+                & ORGANIZED
               </span>
             </h2>
-            <p className="text-xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              A secure, user-friendly platform to organize your family members, track relationships, 
-              and never lose touch with the people who matter most.
+            <p className="text-xl retro-text mb-12 max-w-4xl mx-auto font-retro leading-relaxed">
+              A groovy, secure platform to organize your family members, track relationships, 
+              and never lose touch with the people who matter most. Far out!
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <Button 
                 onClick={onShowAuth} 
                 size="lg" 
-                className="family-gradient hover:opacity-90 text-lg px-8 py-3"
+                className="retro-button text-xl px-12 py-4 font-retro-display font-bold tracking-wide hover-scale"
               >
-                Start Building Your Directory
+                START YOUR DIRECTORY
               </Button>
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="text-lg px-8 py-3 border-primary text-primary hover:bg-primary/10"
+                className="text-xl px-12 py-4 border-2 border-retro-gold text-retro-gold hover:bg-retro-gold hover:text-background font-retro-display font-bold tracking-wide hover-scale transition-all"
               >
-                Learn More
+                LEARN MORE
               </Button>
             </div>
           </div>
@@ -94,28 +108,30 @@ const LandingPage: React.FC<LandingPageProps> = ({ onShowAuth }) => {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-muted/30">
+      <section className="py-24 px-4 bg-gradient-to-br from-muted/20 to-muted/10 relative">
         <div className="container mx-auto">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-              Everything You Need for Family Organization
+          <div className="text-center mb-20">
+            <h3 className="text-4xl md:text-5xl font-bold retro-text mb-6 font-retro-display tracking-wider">
+              EVERYTHING YOU NEED
             </h3>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Powerful features designed to make family management simple, secure, and enjoyable for everyone.
+            <p className="text-xl retro-text max-w-3xl mx-auto font-retro">
+              Powerful features designed to make family management simple, secure, and totally rad.
             </p>
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
-              <Card key={index} className="border-0 shadow-lg hover:shadow-xl transition-all duration-300 animate-fade-in bg-card/80 backdrop-blur-sm">
+              <Card key={index} className="retro-card hover-scale transition-all duration-300 animate-fade-in-up retro-shadow-lg">
                 <CardHeader className="text-center">
-                  <div className="mx-auto mb-4 p-3 bg-muted rounded-full w-fit">
+                  <div className="mx-auto mb-6 p-4 bg-gradient-to-br from-muted to-muted/50 rounded-full w-fit retro-shadow">
                     {feature.icon}
                   </div>
-                  <CardTitle className="text-xl">{feature.title}</CardTitle>
+                  <CardTitle className="text-2xl font-retro-display tracking-wide retro-text">
+                    {feature.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <CardDescription className="text-center text-base">
+                  <CardDescription className="text-center text-lg retro-text font-retro">
                     {feature.description}
                   </CardDescription>
                 </CardContent>
@@ -126,38 +142,48 @@ const LandingPage: React.FC<LandingPageProps> = ({ onShowAuth }) => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4">
-        <div className="container mx-auto text-center">
-          <div className="max-w-3xl mx-auto">
-            <h3 className="text-3xl md:text-4xl font-bold text-foreground mb-6">
-              Ready to Bring Your Family Together?
+      <section className="py-24 px-4 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-10">
+          <div className="absolute top-10 right-10 w-40 h-40 rounded-full bg-retro-gold animate-retro-pulse"></div>
+          <div className="absolute bottom-10 left-10 w-28 h-28 rounded-full bg-retro-orange animate-retro-pulse"></div>
+        </div>
+        
+        <div className="container mx-auto text-center relative z-10">
+          <div className="max-w-4xl mx-auto">
+            <h3 className="text-4xl md:text-5xl font-bold retro-text mb-8 font-retro-display tracking-wider">
+              READY TO BRING YOUR
+              <span className="block text-retro-orange">
+                FAMILY TOGETHER?
+              </span>
             </h3>
-            <p className="text-lg text-muted-foreground mb-8">
-              Join thousands of families who have already organized their loved ones with our platform.
-              Start your family directory today and never lose touch again.
+            <p className="text-xl retro-text mb-12 font-retro leading-relaxed">
+              Join thousands of families who have already organized their loved ones with our totally 
+              awesome platform. Start your family directory today and never lose touch again!
             </p>
             <Button 
               onClick={onShowAuth} 
               size="lg" 
-              className="warm-gradient hover:opacity-90 text-lg px-12 py-4"
+              className="retro-button text-xl px-16 py-5 font-retro-display font-bold tracking-wide hover-scale animate-retro-glow"
             >
-              Create Your Family Directory
+              CREATE YOUR DIRECTORY
             </Button>
           </div>
         </div>
       </section>
 
       {/* Footer */}
-      <footer className="border-t bg-card/50 backdrop-blur-sm py-8 px-4">
+      <footer className="border-t-2 border-retro-brown bg-gradient-to-r from-card to-muted/50 py-12 px-4 retro-shadow">
         <div className="container mx-auto text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-6 h-6 family-gradient rounded-md flex items-center justify-center">
-              <Users className="w-4 h-4 text-white" />
+          <div className="flex items-center justify-center space-x-3 mb-6">
+            <div className="w-8 h-8 family-gradient rounded-md flex items-center justify-center retro-shadow">
+              <Users className="w-5 h-5 text-white" />
             </div>
-            <span className="font-semibold text-foreground">Family Directory</span>
+            <span className="font-bold text-xl retro-text font-retro-display tracking-wider">
+              FAMILY DIRECTORY
+            </span>
           </div>
-          <p className="text-muted-foreground">
-            Building stronger family connections, one member at a time.
+          <p className="retro-text font-retro text-lg">
+            Building stronger family connections, one groovy member at a time.
           </p>
         </div>
       </footer>

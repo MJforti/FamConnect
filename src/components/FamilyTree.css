@@ -1,7 +1,12 @@
+
 .family-tree {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
   min-height: 100%;
   padding: 2rem 0;
+  background: linear-gradient(135deg, 
+    hsl(42, 35%, 20%) 0%, 
+    hsl(35, 30%, 25%) 50%,
+    hsl(45, 40%, 22%) 100%);
 }
 
 .tree {
@@ -21,99 +26,128 @@
 }
 
 .member-card {
-  background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 1rem;
-  width: 200px;
+  background: linear-gradient(145deg, 
+    hsl(45, 38%, 25%) 0%, 
+    hsl(40, 35%, 30%) 100%);
+  border: 2px solid hsl(50, 30%, 35%);
+  border-radius: 8px;
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 220, 180, 0.1);
+  padding: 1.2rem;
+  width: 220px;
   text-align: center;
   position: relative;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
+  transition: all 0.4s ease;
+  color: hsl(250, 240, 220);
 }
 
 .member-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: 
+    0 8px 16px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 220, 180, 0.2);
+  filter: brightness(1.1);
 }
 
 .member-avatar {
-  width: 60px;
-  height: 60px;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  margin: 0 auto 0.75rem;
+  margin: 0 auto 1rem;
   overflow: hidden;
-  border: 3px solid #fff;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  background: #f1f5f9;
+  border: 3px solid hsl(35, 70%, 45%);
+  box-shadow: 
+    0 3px 6px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 200, 150, 0.2);
+  background: linear-gradient(135deg, 
+    hsl(50, 60%, 40%) 0%, 
+    hsl(35, 55%, 45%) 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #94a3b8;
-  font-weight: 600;
-  font-size: 1.5rem;
+  color: hsl(250, 240, 220);
+  font-weight: bold;
+  font-size: 1.6rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .member-name {
-  font-weight: 600;
-  color: #1e293b;
-  margin: 0 0 0.25rem;
-  font-size: 0.95rem;
+  font-weight: bold;
+  color: hsl(250, 240, 220);
+  margin: 0 0 0.5rem;
+  font-size: 1rem;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+  font-family: 'Courier New', monospace;
+  letter-spacing: 0.5px;
 }
 
 .member-relation {
-  font-size: 0.75rem;
-  color: #64748b;
-  background: #f8fafc;
-  padding: 0.25rem 0.5rem;
-  border-radius: 1rem;
+  font-size: 0.8rem;
+  color: hsl(250, 240, 220);
+  background: linear-gradient(135deg, 
+    hsl(35, 70%, 45%) 0%, 
+    hsl(25, 60%, 50%) 100%);
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
   display: inline-block;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  border: 1px solid hsl(30, 50%, 30%);
 }
 
 .member-details {
-  font-size: 0.8rem;
-  color: #64748b;
-  margin-top: 0.5rem;
-  line-height: 1.4;
+  font-size: 0.85rem;
+  color: hsl(200, 180, 160);
+  margin-top: 0.75rem;
+  line-height: 1.5;
+  font-family: 'Courier New', monospace;
 }
 
-/* Connection lines */
+/* Connection lines - retro style */
 .connector {
   position: absolute;
-  background-color: #cbd5e1;
+  background: linear-gradient(90deg, 
+    hsl(35, 70%, 45%) 0%, 
+    hsl(50, 75%, 35%) 100%);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Horizontal connector between spouses */
 .connector.horizontal {
-  height: 2px;
-  width: 40px;
+  height: 3px;
+  width: 50px;
   top: 50%;
   left: 100%;
+  border-radius: 2px;
 }
 
 /* Vertical connector from parents to children */
 .connector.vertical {
-  width: 2px;
-  height: 20px;
+  width: 3px;
+  height: 25px;
   left: 50%;
   top: 100%;
+  border-radius: 2px;
 }
 
 /* Horizontal connector between siblings */
 .connector.sibling {
-  height: 2px;
+  height: 3px;
   width: 100%;
   left: 0;
   top: 0;
+  border-radius: 2px;
 }
 
 /* Container for children */
 .children {
   display: flex;
   position: relative;
-  margin-top: 2rem;
-  padding-top: 2rem;
+  margin-top: 2.5rem;
+  padding-top: 2.5rem;
 }
 
 /* Vertical line from parent to children */
@@ -122,39 +156,47 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: 2px;
-  height: 20px;
-  background-color: #cbd5e1;
+  width: 3px;
+  height: 25px;
+  background: linear-gradient(180deg, 
+    hsl(35, 70%, 45%) 0%, 
+    hsl(50, 75%, 35%) 100%);
   transform: translateX(-50%);
+  border-radius: 2px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .member {
-    margin: 0 0.5rem;
+    margin: 0 0.75rem;
   }
   
   .member-card {
-    width: 160px;
-    padding: 0.75rem;
+    width: 180px;
+    padding: 1rem;
   }
   
   .member-avatar {
-    width: 50px;
-    height: 50px;
-    font-size: 1.25rem;
+    width: 60px;
+    height: 60px;
+    font-size: 1.4rem;
   }
   
   .member-name {
-    font-size: 0.85rem;
+    font-size: 0.9rem;
   }
   
   .member-relation {
-    font-size: 0.7rem;
-    padding: 0.2rem 0.4rem;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.6rem;
   }
   
   .member-details {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+  }
+  
+  .connector.horizontal {
+    width: 40px;
   }
 }
