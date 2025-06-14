@@ -32,8 +32,8 @@ export const useFamilyMembers = (familyId: string | null) => {
 
       if (relationshipsError) throw relationshipsError;
 
-      setMembers(membersData || []);
-      setRelationships(relationshipsData || []);
+      setMembers((membersData || []) as SupabaseFamilyMember[]);
+      setRelationships((relationshipsData || []) as SupabaseFamilyRelationship[]);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {
@@ -52,8 +52,8 @@ export const useFamilyMembers = (familyId: string | null) => {
 
     if (error) throw error;
 
-    setMembers(prev => [...prev, data]);
-    return data;
+    setMembers(prev => [...prev, data as SupabaseFamilyMember]);
+    return data as SupabaseFamilyMember;
   };
 
   const updateMember = async (id: string, updates: Partial<SupabaseFamilyMember>) => {
@@ -66,8 +66,8 @@ export const useFamilyMembers = (familyId: string | null) => {
 
     if (error) throw error;
 
-    setMembers(prev => prev.map(member => member.id === id ? data : member));
-    return data;
+    setMembers(prev => prev.map(member => member.id === id ? data as SupabaseFamilyMember : member));
+    return data as SupabaseFamilyMember;
   };
 
   const deleteMember = async (id: string) => {
@@ -90,8 +90,8 @@ export const useFamilyMembers = (familyId: string | null) => {
 
     if (error) throw error;
 
-    setRelationships(prev => [...prev, data]);
-    return data;
+    setRelationships(prev => [...prev, data as SupabaseFamilyRelationship]);
+    return data as SupabaseFamilyRelationship;
   };
 
   useEffect(() => {
