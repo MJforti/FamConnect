@@ -36,6 +36,126 @@ export type Database = {
         }
         Relationships: []
       }
+      family_members: {
+        Row: {
+          address: string | null
+          created_at: string
+          date_of_birth: string | null
+          date_of_death: string | null
+          email: string | null
+          family_id: string
+          full_name: string
+          gender: string | null
+          id: string
+          is_alive: boolean | null
+          notes: string | null
+          occupation: string | null
+          phone: string | null
+          photo_url: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          date_of_death?: string | null
+          email?: string | null
+          family_id: string
+          full_name: string
+          gender?: string | null
+          id?: string
+          is_alive?: boolean | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          date_of_birth?: string | null
+          date_of_death?: string | null
+          email?: string | null
+          family_id?: string
+          full_name?: string
+          gender?: string | null
+          id?: string
+          is_alive?: boolean | null
+          notes?: string | null
+          occupation?: string | null
+          phone?: string | null
+          photo_url?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_members_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      family_relationships: {
+        Row: {
+          created_at: string
+          divorce_date: string | null
+          family_id: string
+          id: string
+          marriage_date: string | null
+          member_id: string
+          related_member_id: string
+          relationship_type: string
+        }
+        Insert: {
+          created_at?: string
+          divorce_date?: string | null
+          family_id: string
+          id?: string
+          marriage_date?: string | null
+          member_id: string
+          related_member_id: string
+          relationship_type: string
+        }
+        Update: {
+          created_at?: string
+          divorce_date?: string | null
+          family_id?: string
+          id?: string
+          marriage_date?: string | null
+          member_id?: string
+          related_member_id?: string
+          relationship_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "family_relationships_family_id_fkey"
+            columns: ["family_id"]
+            isOneToOne: false
+            referencedRelation: "families"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_relationships_member_id_fkey"
+            columns: ["member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "family_relationships_related_member_id_fkey"
+            columns: ["related_member_id"]
+            isOneToOne: false
+            referencedRelation: "family_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       members: {
         Row: {
           age: number | null

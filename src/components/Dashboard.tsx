@@ -1,192 +1,94 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/contexts/AuthContext';
-import { Family, FamilyMember, MediaItem } from '@/types';
-import { Users, Search, User, Calendar, Bell, Image as ImageIcon, Video } from 'lucide-react';
-import FamilySelector from './FamilySelector';
-import FamilyMemberCard from './FamilyMemberCard';
-import AddMemberModal from './AddMemberModal';
-import MediaGallery from './MediaGallery';
+import { Users, Search, User, Bell, Image as ImageIcon } from 'lucide-react';
+import { useFamilies } from '@/hooks/useFamilies';
+import { useFamilyMembers } from '@/hooks/useFamilyMembers';
 import FamilyTree from './FamilyTree';
+import { SupabaseFamily } from '@/types/supabase';
+import { useToast } from '@/hooks/use-toast';
 
 const Dashboard: React.FC = () => {
   const { user, logout } = useAuth();
-  const [families, setFamilies] = useState<Family[]>([]);
-  const [selectedFamily, setSelectedFamily] = useState<Family | null>(null);
+  const { families, createFamily, deleteFamily } = useFamilies();
+  const [selectedFamily, setSelectedFamily] = useState<SupabaseFamily | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
-  const [filteredMembers, setFilteredMembers] = useState<FamilyMember[]>([]);
-  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
+  const { toast } = useToast();
 
-  useEffect(() => {
-    // Load families from localStorage
-    const savedFamilies = localStorage.getItem('family-directory-families');
-    if (savedFamilies) {
-      const parsedFamilies = JSON.parse(savedFamilies);
-      setFamilies(parsedFamilies);
-      if (parsedFamilies.length > 0) {
-        setSelectedFamily(parsedFamilies[0]);
+  const { 
+    members, 
+    relationships, 
+    loading: membersLoading,
+    addMember, 
+    updateMember, 
+    deleteMember 
+  } = useFamilyMembers(selectedFamily?.id || null);
+
+  React.useEffect(() => {
+    if (families.length > 0 && !selectedFamily) {
+      setSelectedFamily(families[0]);
+    }
+  }, [families, selectedFamily]);
+
+  const handleCreateFamily = async (name: string, description?: string) => {
+    try {
+      const newFamily = await createFamily({ name, description });
+      setSelectedFamily(newFamily);
+      toast({
+        title: "Success",
+        description: "Family created successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to create family",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteFamily = async (familyId: string) => {
+    try {
+      await deleteFamily(familyId);
+      if (selectedFamily?.id === familyId) {
+        setSelectedFamily(families.length > 1 ? families.find(f => f.id !== familyId) || null : null);
       }
+      toast({
+        title: "Success",
+        description: "Family deleted successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete family",
+        variant: "destructive",
+      });
     }
-
-    // Load media items from localStorage
-    const savedMedia = localStorage.getItem('family-directory-media');
-    if (savedMedia) {
-      setMediaItems(JSON.parse(savedMedia));
-    }
-  }, []);
-
-  useEffect(() => {
-    // Filter members based on search term and selected family
-    if (selectedFamily) {
-      const filtered = selectedFamily.members.filter(member =>
-        member.fullName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.relation.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.contactInfo.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        member.notes.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredMembers(filtered);
-    } else {
-      setFilteredMembers([]);
-    }
-  }, [searchTerm, selectedFamily]);
-
-  const handleCreateFamily = (newFamilyData: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => {
-    const family: Family = {
-      ...newFamilyData,
-      id: Date.now().toString(),
-      createdBy: user?.id || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-      members: []
-    };
-
-    const updatedFamilies = [...families, family];
-    setFamilies(updatedFamilies);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-    setSelectedFamily(family);
   };
 
-  const handleDeleteFamily = (familyId: string) => {
-    const updatedFamilies = families.filter(family => family.id !== familyId);
-    setFamilies(updatedFamilies);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-    
-    if (selectedFamily?.id === familyId) {
-      setSelectedFamily(updatedFamilies.length > 0 ? updatedFamilies[0] : null);
-    }
+  const filteredMembers = members.filter(member =>
+    member.full_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    member.notes?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-    // Remove media items for this family
-    const updatedMedia = mediaItems.filter(item => item.familyId !== familyId);
-    setMediaItems(updatedMedia);
-    localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
-  };
-
-  const handleAddMember = (newMember: Omit<FamilyMember, 'id' | 'createdBy' | 'createdAt' | 'updatedAt' | 'familyId'>) => {
-    if (!selectedFamily) return;
-
-    const member: FamilyMember = {
-      ...newMember,
-      id: Date.now().toString(),
-      familyId: selectedFamily.id,
-      createdBy: user?.id || '',
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    const updatedFamily = {
-      ...selectedFamily,
-      members: [...selectedFamily.members, member],
-      updatedAt: new Date()
-    };
-
-    const updatedFamilies = families.map(family =>
-      family.id === selectedFamily.id ? updatedFamily : family
+  if (!user) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Please log in to continue</h1>
+          <Button onClick={() => window.location.href = '/auth'}>
+            Go to Login
+          </Button>
+        </div>
+      </div>
     );
-
-    setFamilies(updatedFamilies);
-    setSelectedFamily(updatedFamily);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-  };
-
-  const handleUpdateMember = (updatedMember: FamilyMember) => {
-    if (!selectedFamily) return;
-
-    const updatedFamily = {
-      ...selectedFamily,
-      members: selectedFamily.members.map(member =>
-        member.id === updatedMember.id
-          ? { ...updatedMember, updatedAt: new Date() }
-          : member
-      ),
-      updatedAt: new Date()
-    };
-
-    const updatedFamilies = families.map(family =>
-      family.id === selectedFamily.id ? updatedFamily : family
-    );
-
-    setFamilies(updatedFamilies);
-    setSelectedFamily(updatedFamily);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-  };
-
-  const handleDeleteMember = (memberId: string) => {
-    if (!selectedFamily) return;
-
-    const updatedFamily = {
-      ...selectedFamily,
-      members: selectedFamily.members.filter(member => member.id !== memberId),
-      updatedAt: new Date()
-    };
-
-    const updatedFamilies = families.map(family =>
-      family.id === selectedFamily.id ? updatedFamily : family
-    );
-
-    setFamilies(updatedFamilies);
-    setSelectedFamily(updatedFamily);
-    localStorage.setItem('family-directory-families', JSON.stringify(updatedFamilies));
-  };
-
-  const handleUploadMedia = (newMediaData: Omit<MediaItem, 'id' | 'createdAt'>) => {
-    const mediaItem: MediaItem = {
-      ...newMediaData,
-      id: Date.now().toString(),
-      uploadedBy: user?.id || '',
-      createdAt: new Date()
-    };
-
-    const updatedMedia = [...mediaItems, mediaItem];
-    setMediaItems(updatedMedia);
-    localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
-  };
-
-  const handleDeleteMedia = (mediaId: string) => {
-    const updatedMedia = mediaItems.filter(item => item.id !== mediaId);
-    setMediaItems(updatedMedia);
-    localStorage.setItem('family-directory-media', JSON.stringify(updatedMedia));
-  };
-
-  const currentFamilyMedia = selectedFamily ? mediaItems.filter(item => item.familyId === selectedFamily.id) : [];
-
-  const upcomingBirthdays = selectedFamily ? selectedFamily.members.filter(member => {
-    const today = new Date();
-    const birthday = new Date(member.dateOfBirth);
-    const thisYearBirthday = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
-    const daysDiff = Math.ceil((thisYearBirthday.getTime() - today.getTime()) / (1000 * 3600 * 24));
-    return daysDiff >= 0 && daysDiff <= 30;
-  }).sort((a, b) => {
-    const today = new Date();
-    const aBirthday = new Date(today.getFullYear(), new Date(a.dateOfBirth).getMonth(), new Date(a.dateOfBirth).getDate());
-    const bBirthday = new Date(today.getFullYear(), new Date(b.dateOfBirth).getMonth(), new Date(b.dateOfBirth).getDate());
-    return aBirthday.getTime() - bBirthday.getTime();
-  }) : [];
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
@@ -201,14 +103,14 @@ const Dashboard: React.FC = () => {
               <div>
                 <h1 className="text-xl font-bold text-foreground">Family Tree</h1>
                 <p className="text-sm text-muted-foreground">
-                  {selectedFamily ? `Managing ${selectedFamily.name}` : 'Welcome back, ' + user?.fullName}
+                  {selectedFamily ? `Managing ${selectedFamily.name}` : 'Welcome back'}
                 </p>
               </div>
             </div>
             
             <div className="flex items-center space-x-2">
-              <Badge variant={user?.familyRole === 'admin' ? 'default' : 'secondary'}>
-                {user?.familyRole === 'admin' ? 'Admin' : 'Member'}
+              <Badge variant="default">
+                Admin
               </Badge>
               <Button variant="outline" onClick={logout}>
                 Sign Out
@@ -220,36 +122,98 @@ const Dashboard: React.FC = () => {
 
       <div className="container mx-auto px-4 py-8">
         {!selectedFamily ? (
-          <FamilySelector
-            families={families}
-            selectedFamily={selectedFamily}
-            onSelectFamily={setSelectedFamily}
-            onCreateFamily={handleCreateFamily}
-            onUpdateFamily={() => {}} // TODO: Implement
-            onDeleteFamily={handleDeleteFamily}
-            canEdit={user?.familyRole === 'admin'}
-          />
+          <Card className="max-w-md mx-auto">
+            <CardHeader>
+              <CardTitle>Create Your First Family</CardTitle>
+              <CardDescription>
+                Start building your family tree by creating a family
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <Input 
+                  placeholder="Family name (e.g., Smith Family)"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const target = e.target as HTMLInputElement;
+                      handleCreateFamily(target.value);
+                    }
+                  }}
+                />
+                <Button 
+                  className="w-full"
+                  onClick={(e) => {
+                    const input = e.currentTarget.previousElementSibling as HTMLInputElement;
+                    if (input.value.trim()) {
+                      handleCreateFamily(input.value.trim());
+                    }
+                  }}
+                >
+                  Create Family
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         ) : (
-          <Tabs defaultValue="members" className="space-y-6">
+          <Tabs defaultValue="family-tree" className="space-y-6">
             <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-              <TabsList className="grid w-full max-w-2xl grid-cols-4">
+              <TabsList className="grid w-full max-w-lg grid-cols-3">
                 <TabsTrigger value="families">Families</TabsTrigger>
                 <TabsTrigger value="members">Members</TabsTrigger>
                 <TabsTrigger value="family-tree">Family Tree</TabsTrigger>
-                <TabsTrigger value="media">Media</TabsTrigger>
               </TabsList>
             </div>
 
             <TabsContent value="families">
-              <FamilySelector
-                families={families}
-                selectedFamily={selectedFamily}
-                onSelectFamily={setSelectedFamily}
-                onCreateFamily={handleCreateFamily}
-                onUpdateFamily={() => {}} // TODO: Implement
-                onDeleteFamily={handleDeleteFamily}
-                canEdit={user?.familyRole === 'admin'}
-              />
+              <Card>
+                <CardHeader>
+                  <CardTitle>Your Families</CardTitle>
+                  <CardDescription>Manage your family groups</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {families.map((family) => (
+                      <div key={family.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        <div>
+                          <h3 className="font-semibold">{family.name}</h3>
+                          {family.description && (
+                            <p className="text-sm text-muted-foreground">{family.description}</p>
+                          )}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant={selectedFamily?.id === family.id ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setSelectedFamily(family)}
+                          >
+                            {selectedFamily?.id === family.id ? "Selected" : "Select"}
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteFamily(family.id)}
+                          >
+                            Delete
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                    
+                    <div className="pt-4 border-t">
+                      <Input 
+                        placeholder="New family name"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') {
+                            const target = e.target as HTMLInputElement;
+                            handleCreateFamily(target.value);
+                            target.value = '';
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             </TabsContent>
 
             <TabsContent value="members" className="space-y-6">
@@ -260,7 +224,7 @@ const Dashboard: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Total Members</p>
-                        <p className="text-3xl font-bold text-foreground">{selectedFamily.members.length}</p>
+                        <p className="text-3xl font-bold text-foreground">{members.length}</p>
                       </div>
                       <div className="p-3 family-gradient rounded-full">
                         <Users className="w-6 h-6 text-white" />
@@ -274,9 +238,7 @@ const Dashboard: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Relationships</p>
-                        <p className="text-3xl font-bold text-foreground">
-                          {selectedFamily.members.reduce((total, member) => total + member.relationships.length, 0)}
-                        </p>
+                        <p className="text-3xl font-bold text-foreground">{relationships.length}</p>
                       </div>
                       <div className="p-3 connection-gradient rounded-full">
                         <User className="w-6 h-6 text-white" />
@@ -289,70 +251,73 @@ const Dashboard: React.FC = () => {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm font-medium text-muted-foreground">Media Items</p>
-                        <p className="text-3xl font-bold text-foreground">{currentFamilyMedia.length}</p>
+                        <p className="text-sm font-medium text-muted-foreground">Active Members</p>
+                        <p className="text-3xl font-bold text-foreground">
+                          {members.filter(m => m.is_alive).length}
+                        </p>
                       </div>
                       <div className="p-3 warm-gradient rounded-full">
-                        <ImageIcon className="w-6 h-6 text-white" />
+                        <User className="w-6 h-6 text-white" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
               </div>
 
-              {/* Search and Add */}
-              <div className="flex flex-col sm:flex-row gap-4 items-center justify-between">
-                <div className="relative flex-1 max-w-md">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search family members..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-                <Button
-                  onClick={() => setIsAddModalOpen(true)}
-                  className="family-gradient hover:opacity-90"
-                >
-                  Add Family Member
-                </Button>
+              {/* Search */}
+              <div className="relative max-w-md">
+                <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search family members..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
               </div>
 
-              {/* Family Members Grid */}
-              <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6">
+              {/* Members List */}
+              <div className="space-y-4">
                 {filteredMembers.map((member) => (
-                  <FamilyMemberCard
-                    key={member.id}
-                    member={member}
-                    onUpdate={handleUpdateMember}
-                    onDelete={handleDeleteMember}
-                    canEdit={user?.familyRole === 'admin' || member.createdBy === user?.id}
-                  />
+                  <Card key={member.id}>
+                    <CardContent className="p-4">
+                      <div className="flex items-center space-x-4">
+                        <Avatar>
+                          <AvatarImage src={member.photo_url || undefined} />
+                          <AvatarFallback>{member.full_name.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1">
+                          <h3 className="font-semibold">{member.full_name}</h3>
+                          {member.date_of_birth && (
+                            <p className="text-sm text-muted-foreground">
+                              Born: {new Date(member.date_of_birth).toLocaleDateString()}
+                            </p>
+                          )}
+                          {member.occupation && (
+                            <p className="text-sm text-muted-foreground">{member.occupation}</p>
+                          )}
+                        </div>
+                        <Badge variant={member.is_alive ? "default" : "secondary"}>
+                          {member.is_alive ? "Living" : "Deceased"}
+                        </Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
                 ))}
               </div>
 
               {filteredMembers.length === 0 && (
-                <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <Card>
                   <CardContent className="p-12 text-center">
                     <Users className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
                     <h3 className="text-lg font-semibold text-foreground mb-2">
                       {searchTerm ? 'No members found' : 'No family members yet'}
                     </h3>
-                    <p className="text-muted-foreground mb-4">
+                    <p className="text-muted-foreground">
                       {searchTerm 
                         ? 'Try adjusting your search terms'
-                        : `Start building the ${selectedFamily.name} by adding your first family member`
+                        : `Start building the ${selectedFamily.name} by adding family members`
                       }
                     </p>
-                    {!searchTerm && (
-                      <Button
-                        onClick={() => setIsAddModalOpen(true)}
-                        className="family-gradient hover:opacity-90"
-                      >
-                        Add First Member
-                      </Button>
-                    )}
                   </CardContent>
                 </Card>
               )}
@@ -366,77 +331,24 @@ const Dashboard: React.FC = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="min-h-[600px] rounded-lg border p-4">
-                    <FamilyTree 
-                      members={selectedFamily.members} 
-                      onUpdateMember={handleUpdateMember} 
-                      onDeleteMember={handleDeleteMember} 
-                      canEdit={user?.familyRole === 'admin'}
-                    />
+                    {membersLoading ? (
+                      <div className="flex items-center justify-center h-full">
+                        <div className="text-muted-foreground">Loading family tree...</div>
+                      </div>
+                    ) : (
+                      <FamilyTree 
+                        members={members} 
+                        relationships={relationships}
+                        canEdit={true}
+                      />
+                    )}
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
-
-            <TabsContent value="media">
-              <MediaGallery
-                mediaItems={currentFamilyMedia}
-                familyId={selectedFamily.id}
-                onUploadMedia={handleUploadMedia}
-                onDeleteMedia={handleDeleteMedia}
-                canEdit={user?.familyRole === 'admin'}
-              />
-            </TabsContent>
           </Tabs>
         )}
-
-        {/* Sidebar - only show when a family is selected */}
-        {selectedFamily && (
-          <div className="fixed right-4 top-24 w-80 space-y-6 hidden xl:block">
-            {/* Upcoming Birthdays */}
-            <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Bell className="w-5 h-5" />
-                  Upcoming Birthdays
-                </CardTitle>
-                <CardDescription>Next 30 days in {selectedFamily.name}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                {upcomingBirthdays.length > 0 ? (
-                  <div className="space-y-3">
-                    {upcomingBirthdays.slice(0, 5).map((member) => {
-                      const birthday = new Date(member.dateOfBirth);
-                      const today = new Date();
-                      const thisYearBirthday = new Date(today.getFullYear(), birthday.getMonth(), birthday.getDate());
-                      const daysDiff = Math.ceil((thisYearBirthday.getTime() - today.getTime()) / (1000 * 3600 * 24));
-                      
-                      return (
-                        <div key={member.id} className="flex items-center justify-between p-3 bg-muted/50 rounded-lg">
-                          <div>
-                            <p className="font-medium text-sm">{member.fullName}</p>
-                            <p className="text-xs text-muted-foreground">{member.relation}</p>
-                          </div>
-                          <Badge variant={daysDiff === 0 ? 'default' : 'secondary'}>
-                            {daysDiff === 0 ? 'Today!' : `${daysDiff} days`}
-                          </Badge>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-sm text-muted-foreground">No upcoming birthdays</p>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        )}
       </div>
-
-      <AddMemberModal
-        isOpen={isAddModalOpen}
-        onClose={() => setIsAddModalOpen(false)}
-        onAdd={handleAddMember}
-      />
     </div>
   );
 };
