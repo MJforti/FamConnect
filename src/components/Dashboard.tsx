@@ -7,7 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { useAuth } from '@/contexts/AuthContext';
-import { Users, Search, User, Bell, Image as ImageIcon } from 'lucide-react';
+import { Users, Search, User } from 'lucide-react';
 import { useFamilies } from '@/hooks/useFamilies';
 import { useFamilyMembers } from '@/hooks/useFamilyMembers';
 import FamilyTree from './FamilyTree';
@@ -80,9 +80,9 @@ const Dashboard: React.FC = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Please log in to continue</h1>
+          <h1 className="text-2xl font-bold mb-4 text-foreground">Please log in to continue</h1>
           <Button onClick={() => window.location.href = '/auth'}>
             Go to Login
           </Button>
@@ -92,14 +92,14 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-background">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-card/80 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b bg-card sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-4">
-              <div className="w-8 h-8 family-gradient rounded-lg flex items-center justify-center">
-                <Users className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                <Users className="w-5 h-5 text-primary-foreground" />
               </div>
               <div>
                 <h1 className="text-xl font-bold text-foreground">Family Tree</h1>
@@ -220,35 +220,35 @@ const Dashboard: React.FC = () => {
             <TabsContent value="members" className="space-y-6">
               {/* Quick Stats */}
               <div className="grid sm:grid-cols-3 gap-4">
-                <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <Card className="border shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Total Members</p>
                         <p className="text-3xl font-bold text-foreground">{members.length}</p>
                       </div>
-                      <div className="p-3 family-gradient rounded-full">
-                        <Users className="w-6 h-6 text-white" />
+                      <div className="p-3 bg-primary rounded-full">
+                        <Users className="w-6 h-6 text-primary-foreground" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <Card className="border shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
                         <p className="text-sm font-medium text-muted-foreground">Relationships</p>
                         <p className="text-3xl font-bold text-foreground">{relationships.length}</p>
                       </div>
-                      <div className="p-3 connection-gradient rounded-full">
-                        <User className="w-6 h-6 text-white" />
+                      <div className="p-3 bg-secondary rounded-full">
+                        <User className="w-6 h-6 text-secondary-foreground" />
                       </div>
                     </div>
                   </CardContent>
                 </Card>
 
-                <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+                <Card className="border shadow-sm">
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
@@ -257,8 +257,8 @@ const Dashboard: React.FC = () => {
                           {members.filter(m => m.is_alive).length}
                         </p>
                       </div>
-                      <div className="p-3 warm-gradient rounded-full">
-                        <User className="w-6 h-6 text-white" />
+                      <div className="p-3 bg-accent rounded-full">
+                        <User className="w-6 h-6 text-accent-foreground" />
                       </div>
                     </div>
                   </CardContent>
@@ -325,7 +325,7 @@ const Dashboard: React.FC = () => {
             </TabsContent>
 
             <TabsContent value="family-tree" className="space-y-6">
-              <Card className="border-0 shadow-lg bg-card/80 backdrop-blur-sm">
+              <Card className="border shadow-sm">
                 <CardHeader>
                   <CardTitle>Family Tree</CardTitle>
                   <CardDescription>Visualize your family relationships</CardDescription>

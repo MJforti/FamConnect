@@ -5,58 +5,50 @@
  
 @layer base {
   :root {
-    /* Retro color palette - warm earth tones */
-    --background: 42 35 20; /* Deep warm brown */
-    --foreground: 250 240 220; /* Cream white */
-    --card: 45 38 25; /* Slightly lighter brown */
-    --card-foreground: 250 240 220;
-    --popover: 40 33 18;
-    --popover-foreground: 250 240 220;
-    --primary: 35 70 45; /* Retro orange */
-    --primary-foreground: 250 240 220;
-    --secondary: 25 45 35; /* Burnt orange */
-    --secondary-foreground: 250 240 220;
-    --muted: 38 32 22;
-    --muted-foreground: 180 160 130;
-    --accent: 50 75 35; /* Retro gold */
-    --accent-foreground: 20 15 10;
-    --destructive: 15 80 60; /* Retro red */
-    --destructive-foreground: 250 240 220;
-    --border: 50 42 28;
-    --input: 45 38 25;
-    --ring: 35 70 45;
+    /* Minimalistic black and white color palette */
+    --background: 0 0 100%; /* Pure white */
+    --foreground: 0 0 0%; /* Pure black */
+    --card: 0 0 98%; /* Light gray */
+    --card-foreground: 0 0 0%;
+    --popover: 0 0 100%;
+    --popover-foreground: 0 0 0%;
+    --primary: 0 0 0%; /* Black */
+    --primary-foreground: 0 0 100%; /* White */
+    --secondary: 0 0 95%; /* Light gray */
+    --secondary-foreground: 0 0 0%;
+    --muted: 0 0 96%;
+    --muted-foreground: 0 0 45%;
+    --accent: 0 0 90%; /* Medium gray */
+    --accent-foreground: 0 0 0%;
+    --destructive: 0 85% 60%; /* Red for destructive actions */
+    --destructive-foreground: 0 0 100%;
+    --border: 0 0 90%;
+    --input: 0 0 96%;
+    --ring: 0 0 0%;
     --radius: 0.5rem;
-    
-    /* Custom retro theme colors */
-    --family-warm: 45 70 40; /* Retro orange */
-    --family-warm-foreground: 250 240 220;
-    --family-love: 25 60 50; /* Burnt sienna */
-    --family-love-foreground: 250 240 220;
-    --family-connection: 55 65 30; /* Mustard yellow */
-    --family-connection-foreground: 20 15 10;
   }
  
   .dark {
-    /* Dark retro theme */
-    --background: 25 20 15;
-    --foreground: 250 240 220;
-    --card: 30 25 18;
-    --card-foreground: 250 240 220;
-    --popover: 28 23 16;
-    --popover-foreground: 250 240 220;
-    --primary: 35 70 45;
-    --primary-foreground: 250 240 220;
-    --secondary: 25 45 35;
-    --secondary-foreground: 250 240 220;
-    --muted: 32 27 20;
-    --muted-foreground: 160 140 110;
-    --accent: 50 75 35;
-    --accent-foreground: 20 15 10;
-    --destructive: 15 80 60;
-    --destructive-foreground: 250 240 220;
-    --border: 40 35 25;
-    --input: 35 30 22;
-    --ring: 35 70 45;
+    /* Dark mode - inverted palette */
+    --background: 0 0 4%; /* Near black */
+    --foreground: 0 0 98%; /* Near white */
+    --card: 0 0 8%;
+    --card-foreground: 0 0 98%;
+    --popover: 0 0 4%;
+    --popover-foreground: 0 0 98%;
+    --primary: 0 0 98%;
+    --primary-foreground: 0 0 9%;
+    --secondary: 0 0 14%;
+    --secondary-foreground: 0 0 98%;
+    --muted: 0 0 14%;
+    --muted-foreground: 0 0 63%;
+    --accent: 0 0 14%;
+    --accent-foreground: 0 0 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0 98%;
+    --border: 0 0 14%;
+    --input: 0 0 14%;
+    --ring: 0 0 83%;
   }
 }
 
@@ -68,181 +60,38 @@
   body {
     @apply bg-background text-foreground;
     font-feature-settings: "rlig" 1, "calt" 1;
-    font-family: 'Courier New', 'Monaco', 'Menlo', monospace;
-    background-image: radial-gradient(circle at 20% 80%, rgba(120, 100, 60, 0.1) 0%, transparent 50%),
-                      radial-gradient(circle at 80% 20%, rgba(180, 120, 70, 0.1) 0%, transparent 50%);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   }
 }
 
 @layer utilities {
-  .family-gradient {
+  .minimal-card {
+    @apply bg-card border border-border rounded-lg shadow-sm;
+  }
+  
+  .minimal-button {
+    @apply bg-primary text-primary-foreground border border-border rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2;
+  }
+  
+  .minimal-input {
+    @apply flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50;
+  }
+  
+  .minimal-header {
+    @apply border-b bg-card/50 backdrop-blur-sm;
+  }
+  
+  .minimal-gradient {
     background: linear-gradient(135deg, 
-      hsl(35, 70%, 45%) 0%, 
-      hsl(25, 60%, 50%) 35%, 
-      hsl(50, 75%, 35%) 70%, 
-      hsl(15, 80%, 60%) 100%);
-    animation: retro-gradient-shift 10s ease infinite;
-    background-size: 300% 300%;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+      hsl(0, 0%, 0%) 0%, 
+      hsl(0, 0%, 20%) 100%);
   }
   
-  .warm-gradient {
-    background: linear-gradient(135deg, 
-      hsl(35, 70%, 45%) 0%, 
-      hsl(25, 60%, 50%) 100%);
-    border: 2px solid hsl(50, 40%, 30%);
-    transition: all 0.4s ease;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  .minimal-shadow {
+    box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   }
   
-  .warm-gradient:hover {
-    transform: translateY(-3px) scale(1.02);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    filter: brightness(1.1);
-  }
-  
-  .connection-gradient {
-    background: linear-gradient(135deg, 
-      hsl(50, 75%, 35%) 0%, 
-      hsl(35, 70%, 45%) 50%,
-      hsl(25, 60%, 50%) 100%);
-    border: 2px solid hsl(45, 50%, 25%);
-    animation: retro-gradient-shift 8s ease infinite;
-    background-size: 300% 300%;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-  }
-  
-  .retro-card {
-    background: linear-gradient(145deg, 
-      hsl(var(--card)) 0%, 
-      hsl(45, 38%, 25%) 100%);
-    border: 2px solid hsl(50, 30%, 35%);
-    border-radius: 8px;
-    box-shadow: 
-      0 4px 8px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 220, 180, 0.1);
-  }
-  
-  .retro-button {
-    background: linear-gradient(145deg, 
-      hsl(35, 70%, 45%) 0%, 
-      hsl(25, 60%, 40%) 100%);
-    border: 2px solid hsl(30, 50%, 30%);
-    color: hsl(var(--foreground));
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
-    box-shadow: 
-      0 3px 6px rgba(0, 0, 0, 0.3),
-      inset 0 1px 0 rgba(255, 200, 150, 0.2);
-    transition: all 0.3s ease;
-  }
-  
-  .retro-button:hover {
-    transform: translateY(-2px);
-    box-shadow: 
-      0 5px 15px rgba(0, 0, 0, 0.4),
-      inset 0 1px 0 rgba(255, 200, 150, 0.3);
-    filter: brightness(1.1);
-  }
-  
-  .retro-text {
-    color: hsl(var(--foreground));
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-    font-weight: 500;
-  }
-  
-  .retro-header {
-    background: linear-gradient(90deg, 
-      hsl(35, 70%, 45%) 0%, 
-      hsl(50, 75%, 35%) 50%,
-      hsl(25, 60%, 50%) 100%);
-    border-bottom: 3px solid hsl(30, 50%, 25%);
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  }
-  
-  /* Animation keyframes */
-  @keyframes fadeInUp {
-    from {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
-  @keyframes retro-gradient-shift {
-    0% {
-      background-position: 0% 50%;
-    }
-    25% {
-      background-position: 100% 0%;
-    }
-    50% {
-      background-position: 100% 100%;
-    }
-    75% {
-      background-position: 0% 100%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-  
-  @keyframes retro-pulse {
-    0%, 100% {
-      opacity: 1;
-      filter: brightness(1);
-    }
-    50% {
-      opacity: 0.8;
-      filter: brightness(1.2);
-    }
-  }
-  
-  @keyframes retro-glow {
-    0%, 100% {
-      box-shadow: 0 0 5px rgba(255, 180, 100, 0.5);
-    }
-    50% {
-      box-shadow: 0 0 20px rgba(255, 180, 100, 0.8);
-    }
-  }
-  
-  /* Animation classes */
-  .animate-fade-in-up {
-    animation: fadeInUp 0.8s ease-out forwards;
-  }
-  
-  .animate-retro-pulse {
-    animation: retro-pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  
-  .animate-retro-glow {
-    animation: retro-glow 2s ease-in-out infinite;
-  }
-  
-  .transition-all {
-    transition: all 0.4s ease;
-  }
-  
-  .hover-scale {
-    transition: transform 0.3s ease;
-  }
-  
-  .hover-scale:hover {
-    transform: scale(1.05);
-  }
-  
-  .retro-shadow {
-    box-shadow: 
-      0 4px 8px rgba(0, 0, 0, 0.3),
-      0 8px 16px rgba(0, 0, 0, 0.15);
-  }
-  
-  .retro-shadow-lg {
-    box-shadow: 
-      0 8px 16px rgba(0, 0, 0, 0.4),
-      0 16px 32px rgba(0, 0, 0, 0.2);
+  .minimal-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   }
 }
