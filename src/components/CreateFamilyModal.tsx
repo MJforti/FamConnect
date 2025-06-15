@@ -5,12 +5,12 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import { Family } from '@/types';
+import { SupabaseFamily } from '@/types/supabase';
 
 interface CreateFamilyModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (family: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => void;
+  onCreate: (family: Omit<SupabaseFamily, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => Promise<void>;
 }
 
 const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
@@ -22,25 +22,34 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
     name: '',
     description: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.name.trim()) return;
+    if (!formData.name.trim() || isSubmitting) return;
 
-    onCreate({
-      name: formData.name.trim(),
-      description: formData.description.trim() || undefined,
-      createdBy: '' // Will be set by parent component
-    });
+    setIsSubmitting(true);
+    try {
+      await onCreate({
+        name: formData.name.trim(),
+        description: formData.description.trim() || null
+      });
 
-    setFormData({ name: '', description: '' });
-    onClose();
+      setFormData({ name: '', description: '' });
+      onClose();
+    } catch (error) {
+      console.error('Error creating family:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleClose = () => {
-    setFormData({ name: '', description: '' });
-    onClose();
+    if (!isSubmitting) {
+      setFormData({ name: '', description: '' });
+      onClose();
+    }
   };
 
   return (
@@ -58,6 +67,7 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
               value={formData.name}
               onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               placeholder="e.g., The Smith Family"
+              disabled={isSubmitting}
               required
             />
           </div>
@@ -69,20 +79,21 @@ const CreateFamilyModal: React.FC<CreateFamilyModalProps> = ({
               value={formData.description}
               onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
               placeholder="A brief description of this family branch..."
+              disabled={isSubmitting}
               rows={3}
             />
           </div>
 
           <div className="flex justify-end space-x-2 pt-4">
-            <Button type="button" variant="outline" onClick={handleClose}>
+            <Button type="button" variant="outline" onClick={handleClose} disabled={isSubmitting}>
               Cancel
             </Button>
             <Button 
               type="submit" 
-              className="family-gradient hover:opacity-90"
-              disabled={!formData.name.trim()}
+              className="bg-primary hover:bg-primary/90"
+              disabled={!formData.name.trim() || isSubmitting}
             >
-              Create Family
+              {isSubmitting ? 'Creating...' : 'Create Family'}
             </Button>
           </div>
         </form>

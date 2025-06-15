@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,6 +10,7 @@ import { Users, Search, User, Plus } from 'lucide-react';
 import { useFamilies } from '@/hooks/useFamilies';
 import { useFamilyMembers } from '@/hooks/useFamilyMembers';
 import FamilyTree from './FamilyTree';
+import CreateFamilyModal from './CreateFamilyModal';
 import { SupabaseFamily } from '@/types/supabase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -21,6 +21,7 @@ const Dashboard: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [newFamilyName, setNewFamilyName] = useState('');
   const [isCreatingFamily, setIsCreatingFamily] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const { toast } = useToast();
 
   const { 
@@ -38,26 +39,12 @@ const Dashboard: React.FC = () => {
     }
   }, [families, selectedFamily]);
 
-  const handleCreateFamily = async () => {
-    if (!newFamilyName.trim()) {
-      toast({
-        title: "Error",
-        description: "Please enter a family name",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsCreatingFamily(true);
+  const handleCreateFamily = async (familyData: Omit<SupabaseFamily, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => {
     try {
-      console.log('Creating family with name:', newFamilyName);
-      const newFamily = await createFamily({ 
-        name: newFamilyName.trim(), 
-        description: null 
-      });
+      console.log('Creating family with data:', familyData);
+      const newFamily = await createFamily(familyData);
       console.log('Family created successfully:', newFamily);
       setSelectedFamily(newFamily);
-      setNewFamilyName('');
       toast({
         title: "Success",
         description: "Family created successfully",
@@ -69,6 +56,29 @@ const Dashboard: React.FC = () => {
         description: error instanceof Error ? error.message : "Failed to create family",
         variant: "destructive",
       });
+      throw error; // Re-throw to let the modal handle the error state
+    }
+  };
+
+  const handleQuickCreateFamily = async () => {
+    if (!newFamilyName.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a family name",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsCreatingFamily(true);
+    try {
+      await handleCreateFamily({ 
+        name: newFamilyName.trim(), 
+        description: null 
+      });
+      setNewFamilyName('');
+    } catch (error) {
+      // Error already handled in handleCreateFamily
     } finally {
       setIsCreatingFamily(false);
     }
@@ -163,22 +173,11 @@ const Dashboard: React.FC = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <Input 
-                  placeholder="Family name (e.g., Smith Family)"
-                  value={newFamilyName}
-                  onChange={(e) => setNewFamilyName(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !isCreatingFamily) {
-                      handleCreateFamily();
-                    }
-                  }}
-                />
                 <Button 
                   className="w-full"
-                  onClick={handleCreateFamily}
-                  disabled={isCreatingFamily}
+                  onClick={() => setShowCreateModal(true)}
                 >
-                  {isCreatingFamily ? 'Creating...' : 'Create Family'}
+                  Create Family
                 </Button>
               </div>
             </CardContent>
@@ -229,31 +228,20 @@ const Dashboard: React.FC = () => {
                     ))}
                     
                     <div className="pt-4 border-t">
-                      <div className="flex gap-2">
-                        <Input 
-                          placeholder="New family name"
-                          value={newFamilyName}
-                          onChange={(e) => setNewFamilyName(e.target.value)}
-                          onKeyDown={(e) => {
-                            if (e.key === 'Enter' && !isCreatingFamily) {
-                              handleCreateFamily();
-                            }
-                          }}
-                        />
-                        <Button 
-                          onClick={handleCreateFamily}
-                          disabled={isCreatingFamily}
-                        >
-                          <Plus className="w-4 h-4 mr-2" />
-                          {isCreatingFamily ? 'Creating...' : 'Add'}
-                        </Button>
-                      </div>
+                      <Button 
+                        onClick={() => setShowCreateModal(true)}
+                        className="w-full"
+                      >
+                        <Plus className="w-4 h-4 mr-2" />
+                        Add New Family
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
               </Card>
             </TabsContent>
 
+            
             <TabsContent value="members" className="space-y-6">
               {/* Quick Stats */}
               <div className="grid sm:grid-cols-3 gap-4">
@@ -387,6 +375,12 @@ const Dashboard: React.FC = () => {
           </Tabs>
         )}
       </div>
+
+      <CreateFamilyModal
+        isOpen={showCreateModal}
+        onClose={() => setShowCreateModal(false)}
+        onCreate={handleCreateFamily}
+      />
     </div>
   );
 };
