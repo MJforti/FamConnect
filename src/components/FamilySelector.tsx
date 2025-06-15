@@ -4,16 +4,16 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Family } from '@/types';
+import { SupabaseFamily } from '@/types/supabase';
 import { Users, Plus, Edit, Trash2 } from 'lucide-react';
 import CreateFamilyModal from './CreateFamilyModal';
 
 interface FamilySelectorProps {
-  families: Family[];
-  selectedFamily: Family | null;
-  onSelectFamily: (family: Family) => void;
-  onCreateFamily: (family: Omit<Family, 'id' | 'createdAt' | 'updatedAt' | 'members'>) => void;
-  onUpdateFamily: (family: Family) => void;
+  families: SupabaseFamily[];
+  selectedFamily: SupabaseFamily | null;
+  onSelectFamily: (family: SupabaseFamily) => void;
+  onCreateFamily: (family: Omit<SupabaseFamily, 'id' | 'user_id' | 'created_at' | 'updated_at'>) => Promise<void>;
+  onUpdateFamily: (family: SupabaseFamily) => void;
   onDeleteFamily: (familyId: string) => void;
   canEdit: boolean;
 }
@@ -35,7 +35,7 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
     family.description?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteFamily = (family: Family) => {
+  const handleDeleteFamily = (family: SupabaseFamily) => {
     if (window.confirm(`Are you sure you want to delete the "${family.name}" family? This will remove all members and cannot be undone.`)) {
       onDeleteFamily(family.id);
     }
@@ -81,7 +81,7 @@ const FamilySelector: React.FC<FamilySelectorProps> = ({
                   <div>
                     <CardTitle className="text-lg">{family.name}</CardTitle>
                     <Badge variant="secondary" className="text-xs mt-1">
-                      {family.members.length} members
+                      0 members
                     </Badge>
                   </div>
                 </div>
